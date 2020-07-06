@@ -18,7 +18,7 @@
 <script>
   //for circle shape moving ball
   //https://stackoverflow.com/questions/2551411/can-you-have-multiple-clipping-regions-in-an-html-canvas
-</script>script>
+</script>
 
 <script>
 var canvas = document.getElementById("myCanvas");
