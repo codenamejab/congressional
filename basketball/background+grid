@@ -29,9 +29,9 @@ $("#btn").on("click", function() {
   var text = document.getElementById("T1").value;
   $("#TB").replaceWith(text);
   //so we can use later cleanly, we'll parse through and get numbers from y=-(ax+b)^2 + c
-  String input = text;
-
-})
+  input = text;
+  
+  })
 
 </script>
 
