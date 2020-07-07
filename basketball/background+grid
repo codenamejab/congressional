@@ -5,12 +5,12 @@
 <input type=text id="T1"> </input>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
-<button type=button id="btn"> Enter </button>
+<button type=button id="btn"> Shoot! </button>
 
 </br>
 </br>
 
-<h3 id="TB"> working </h3>
+<h3 id="TB"> equation </h3>
 
 <canvas id="myCanvas" width="900" height="600" style="border:1px solid #d3d3d3;">
 </canvas>
@@ -18,6 +18,21 @@
 <script>
   //for circle shape moving ball
   //https://stackoverflow.com/questions/2551411/can-you-have-multiple-clipping-regions-in-an-html-canvas
+</script>
+
+<script>
+  /*needs to be adjusted so new text is still header,
+https://stackoverflow.com/questions/41690803/how-to-make-a-input-field-value-in-h1 
+says that you can't. anyways we can't have it push canvas left
+ */
+$("#btn").on("click", function() {
+  var text = document.getElementById("T1").value;
+  $("#TB").replaceWith(text);
+  //so we can use later cleanly, we'll parse through and get numbers from y=-(ax+b)^2 + c
+  String input = text;
+
+})
+
 </script>
 
 <script>
@@ -33,7 +48,6 @@ can_height_gridScale = can_height/20;
 
 drawGrid();
 drawNotches();
-
   function drawNotches(i){
     ctx.lineWidth=3;
     ctx.strokeStyle= 'black';
@@ -75,7 +89,7 @@ drawNotches();
     var i=0;
     axis_pos = 1;
 
-
+  
     for(var i=0;i<=can_width;i+=can_width_gridScale){
       if(i==(can_width)/2){
         ctx.lineWidth=3;
@@ -106,25 +120,12 @@ drawNotches();
 
 
 <script>
-
-/*needs to be adjusted so new text is still header,
-https://stackoverflow.com/questions/41690803/how-to-make-a-input-field-value-in-h1 
-says that you can't. anyways we can't have it push canvas left
- */
-$("#btn").on("click", function() {
-  var text = document.getElementById("T1").value;
-  $("#TB").replaceWith(text);
-})
-
-
-
-
 var c = document.getElementById("myCanvas");
 var ctx = c.getContext("2d");
 
 add_hoop();
 add_ball();
-shot_path();
+
 
 function add_hoop()
 {
@@ -133,6 +134,12 @@ function add_hoop()
   hoop.onload = function(){
     ctx.drawImage(hoop, 0, 0);
   }
+  //show goal range
+  ctx.strokeStyle = 'rgb(0,255,0)'
+  ctx.beginPath();
+  ctx.moveTo(192, 30);
+  ctx.lineTo(192, 150);
+  ctx.stroke();
 }
 
 function add_ball()
@@ -146,26 +153,53 @@ function add_ball()
     ctx = canvas.getContext('2d');
 
     //after cropping the image to circle shape, the webpage adds a rectangle outline so we have to manually cut out
+    ctx.save();
     ctx.beginPath();
     ctx.arc(695, 440, 55, 0, 6.28, false); //draw the circle
     ctx.clip(); //call the clip method so the next render is clipped in last path
-    ctx.stroke();
     ctx.closePath();
     ctx.drawImage(ball, 620, 380, ball.width * 0.6, ball.height * 0.6);
+    ctx.restore();
+
+    //show start point
+    ctx.strokeStyle = 'rgb(0,255,0)'
+    ctx.beginPath();
+    ctx.arc(660,360,5,0,6.28);
+    ctx.fill();
   }
 }
 
-function shot_path(){
-ctx.beginPath();
-ctx.moveTo(600, 380);
-ctx.quadraticCurveTo(450, 20, 250, 120);
-ctx.strokeStyle = 'red';
-ctx.lineWidth = 4;
-ctx.stroke();
-}
+
 
 
 </script> 
 
+
+<script>
+//clip so that only shot part of parabola shows, not after part
+
+  canvas = document.getElementById('myCanvas');
+    ctx = canvas.getContext('2d');
+
+   
+curve();
+function curve() {
+  // body...
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(200, 60, 490, 400); //draw the circle
+  ctx.clip(); //call the clip method so the next render is clipped in last path
+  ctx.closePath();
+  ctx.beginPath();
+  ctx.moveTo(660,360);
+  ctx.quadraticCurveTo(450, 20, 200, 120);
+  ctx.strokeStyle = 'red';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.restore();
+
+}
+
+ </script> 
 </body>
 </html>
