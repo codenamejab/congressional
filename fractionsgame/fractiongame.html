@@ -1,24 +1,288 @@
 <!DOCTYPE html>
 <html>
+<head>
+<style>
+div.a {
+    text-align: center;
+}
+</style>
+</head>
 <body>
 
-</br>
-</br>
+<div class = "a" id = "myDIV">
+<h1 id="TB" style="color:black;">Part of this cake has already been eaten...</h1>
+<h2 style = "color:black;">Using the input box below, indicate what fraction of the cake has already been eaten, writing your answer in A/B form</h2>
+<h3 id="nums"></h3>
 
-<h3 id="TB" style="color:black;">Click on the number of pizza pieces that represent this fraction:</h3 >
+<br>
+
+<input type="text" id="ans"> </input>
+<button onclick="checkAns()" id="btn"> Check </button>
+
+<br>
+<br>
+<br>
+<br>
 
 <canvas id="myCanvas" width="900" height="600" style="border:1px solid #d3d3d3;">
 </canvas>
+<img id = "cake1" src = "fractionsgame/assets/cake1.jpg" style = " display: none;">
+<img id = "cake2" src = "fractionsgame/assets/cake2.jpg" style = " display: none;">
+<img id = "cake3" src = "fractionsgame/assets/cake3.jpg" style = " display: none;">
+<img id = "crumbs1" src = "fractionsgame/assets/crumbs.png" style = "display: none;">
 
 <script>
-cake = new Image();
-cake.src = 'fractionsgame/assets/pizza' + (Math.floor(Math.random * 3) + 1) + '.png';
+//document.getElementById("myDIV").style.textAlign = "center";
+var cakenum = Math.floor(Math.random() * 3) + 1;
+if(cakenum == 1) {
+    var cake = document.getElementById("cake1");
+} else if(cakenum == 2) {
+    var cake = document.getElementById("cake2");
+} else {
+    var cake = document.getElementById("cake3");
+}
+var crumbs = document.getElementById("crumbs1");
 
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
+//scale factor
+var scale = Math.min(myCanvas.width / cake.width, myCanvas.height / cake.height);
+var denominator = 0;
+while(denominator == 0 || denominator == 1 || denominator == 5 || denominator == 7 || denominator == 10 || denominator == 11) {
+    denominator = Math.floor(Math.random() * 13);
+}
+var numerator = 0;
+while(numerator == 0) {
+    numerator = Math.floor(Math.random() * (denominator - 1)) + 1;
+}
+
+//code to scale fit pictures
+/*
+scaleToFit(cake);
+function scaleToFit(cake){
+    // get the scale
+    var scale = Math.min(myCanvas.width / cake.width, myCanvas.height / cake.height);
+    // get the top left position of the image
+    var x = (myCanvas.width / 2) - (cake.width / 2) * scale;
+    var y = (myCanvas.height / 2) - (cake.height / 2) * scale;
+    ctx.drawImage(cake, x, y, cake.width * scale, cake.height * scale);
+}
+*/
+
+ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+
+
+if(denominator == 2) {
+    halves();
+} else if(denominator == 3) {
+    thirds();
+} else if(denominator == 4) {
+    fourths();
+} else if(denominator == 6) {
+    sixths();
+} else if(denominator == 8) {
+    eighths();
+} else if(denominator == 9) {
+    ninths();
+} else if(denominator == 12) {
+    twelfths();
+}
+
+function halves() {
+    var columns = 2;
+    var rows = 1;
+    var pieceWidth = cake.width * scale / columns;
+    var pieceHeight = cake.height * scale / rows;
+    cutImageUp(columns, rows, pieceWidth, pieceHeight);
+    addCrumbs(columns, rows, pieceWidth, pieceHeight, numerator);
+    drawLines(columns, rows, pieceWidth, pieceHeight);
+}
+
+function thirds() {
+    var columns = 3;
+    var rows = 1;
+    var pieceWidth = cake.width * scale / columns;
+    var pieceHeight = cake.height * scale / rows;
+    cutImageUp(columns, rows, pieceWidth, pieceHeight);
+    addCrumbs(columns, rows, pieceWidth, pieceHeight, numerator);
+    drawLines(columns, rows, pieceWidth, pieceHeight);
+}
+
+function fourths() {
+    var columns = 2;
+    var rows = 2;
+    var pieceWidth = cake.width * scale / columns;
+    var pieceHeight = cake.height * scale / rows;
+    cutImageUp(columns, rows, pieceWidth, pieceHeight);
+    addCrumbs(columns, rows, pieceWidth, pieceHeight, numerator);
+    drawLines(columns, rows, pieceWidth, pieceHeight);
+}
+
+function sixths() {
+    var columns = 3;
+    var rows = 2;
+    var pieceWidth = cake.width * scale / columns;
+    var pieceHeight = cake.height * scale / rows;
+    cutImageUp(columns, rows, pieceWidth, pieceHeight);
+    addCrumbs(columns, rows, pieceWidth, pieceHeight, numerator);
+    drawLines(columns, rows, pieceWidth, pieceHeight);
+}
+
+function eighths() {
+    var columns = 4;
+    var rows = 2;
+    var pieceWidth = cake.width * scale / columns;
+    var pieceHeight = cake.height * scale / rows;
+    cutImageUp(columns, rows, pieceWidth, pieceHeight);
+    addCrumbs(columns, rows, pieceWidth, pieceHeight, numerator);
+    drawLines(columns, rows, pieceWidth, pieceHeight);
+}
+
+function ninths() {
+    var columns = 3;
+    var rows = 3;
+    var pieceWidth = cake.width * scale / columns;
+    var pieceHeight = cake.height * scale / rows;
+    cutImageUp(columns, rows, pieceWidth, pieceHeight);
+    addCrumbs(columns, rows, pieceWidth, pieceHeight, numerator);
+    drawLines(columns, rows, pieceWidth, pieceHeight);
+}
+
+function twelfths() {
+    var columns = 4;
+    var rows = 3;
+    var pieceWidth = cake.width * scale / columns;
+    var pieceHeight = cake.height * scale / rows;
+    cutImageUp(columns, rows, pieceWidth, pieceHeight);
+    addCrumbs(columns, rows, pieceWidth, pieceHeight, numerator);
+    drawLines(columns, rows, pieceWidth, pieceHeight);
+}
+
+/*
+window.onload = function() {
+    cutImageUp();
+    addCrumbs();
+}
+*/
+
+function cutImageUp(columns, rows, pieceWidth, pieceHeight) {
+    for(var x = 0; x < rows; x++) {
+        for(var y = 0; y < columns; y++) {
+            //cake piece
+            ctx.drawImage(cake, y * cake.width / columns, x * cake.height / rows, cake.width / columns, cake.height / rows, y * (pieceWidth), x * (pieceHeight), pieceWidth, pieceHeight);
+        }
+    }
+}
+
+function drawLines(columns, rows, pieceWidth, pieceHeight) {
+    //vert lines
+    for(var x = 1; x <= columns; x++) {
+        ctx.beginPath();
+        ctx.moveTo(x * (pieceWidth), 0 * (pieceHeight));
+        ctx.lineTo(x * (pieceWidth), 3 * pieceHeight);
+        ctx.stroke();
+    }
+    //horz lines
+    for(var x = 1; x <= rows; x++) {
+        ctx.beginPath();
+        ctx.moveTo(0, x * pieceHeight);
+        ctx.lineTo(columns * pieceWidth, x * pieceHeight);
+        ctx.stroke();
+    }
+}
+
+function addCrumbs(columns, rows, pieceWidth, pieceHeight, numerator) {
+    var count = 0;
+    var condition = false;
+    while(count <= numerator) {
+        for(var x = 0; x < rows; x++) {
+            for(var y = 0; y < columns; y++) {
+                ctx.drawImage(crumbs, y * (pieceWidth), x * (pieceHeight), pieceWidth, pieceHeight);
+                count++;
+                if(count == numerator) {
+                    condition = true;
+                    break;
+                }
+            }
+            if(condition) break;
+        }
+        if(condition) break;
+    }
+}
+
+//document.getElementById("nums").innerHTML = numerator + " " + denominator;
+
+function checkAns() {
+    var text = document.getElementById("ans").value;
+    try {
+        if(!text.includes("/")) {
+            throw "No fraction sign detected!"
+        }
+    } catch(e) {
+        alert("ERROR = " + e)
+        return
+    }
+    var index = 0;
+    var testnumerator = "";
+    var condition = false;
+    try {
+        for(var i = 0; i < text.length; i++) {
+            if(text.charAt(i) == '/') {
+                index = i;
+                break;
+            }
+            if(text.charAt(i) < 0 || text.charAt(i) > 9) {
+                condition = true;
+                break;
+            }
+            testnumerator+=text.charAt(i);
+        }
+        if(condition) {
+            throw "please enter digits between 0-9 only"
+        }
+    } catch (e) {
+        alert("ERROR = "  + e)
+        return
+    }
+    var testdenominator = "";
+    try {
+        for(var i = index + 1; i < text.length; i++) {
+            if(text.charAt(i) < 0 || text.charAt(i) > 9) {
+                condition = true;
+                break;
+            }
+            testdenominator+=text.charAt(i);
+        }
+        if(condition) {
+            throw "please enter digits between 0-9 only"
+        }
+    } catch (e) {
+        alert("ERROR = " + e)
+        return
+    }
+    var check1 = parseInt(testnumerator)
+    var check2 = parseInt(testdenominator)
+    if(parseFloat(check1) / parseFloat(check2) == parseFloat(numerator) / parseFloat(denominator)) {
+        alert("Correct! Refresh the page for a new question")
+        return
+    }
+    try {
+        if(check1 != numerator && check2 != denominator) {
+            throw "your numerator and denominator are both incorrect!"
+        } else if(check1 != numerator) {
+            throw "your numerator is incorrect"
+        } else if(check2 != denominator) {
+            throw "your denominator is incorrect"
+        }
+    } catch(e) {
+        alert("ERROR = " + e)
+    }
+}
 
 </script>
+
+</div>
 
 </body>
 </html>
