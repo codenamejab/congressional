@@ -1,0 +1,179 @@
+function animate() {
+
+    // set the animation position (0-100)
+    percent += direction;
+    if (percent < 0) {
+        percent = 0;
+        direction = 1;
+    };
+
+    draw(percent);
+
+    if (percent < 100){
+    // request another frame
+    setTimeout(function () {
+        requestAnimationFrame(animate);
+    }, 1000 / fps);
+    
+    }
+}
+
+
+// draw the current frame based on sliderValue
+function draw(sliderValue) {
+
+    // redraw path
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.lineWidth = 5;
+
+
+   
+    ctx.strokeStyle = 'black';
+    drawGrid();
+    drawNotches();
+    add_hoop();
+    add_line();
+    
+
+    //show start point
+
+
+    ctx.strokeStyle = 'rgb(0,255,0)'
+    ctx.fillStyle = 'blue'   
+    ctx.beginPath();
+    ctx.arc(660,480,5,0,6.28);
+    ctx.fill();
+    ctx.strokeStyle= "black"; 
+    ctx.lineWidth = 2;
+    ctx.font = "bold 30px Arial"
+    ctx.fillText("Start your shot here", 540,445)
+    ctx.strokeText("Start your shot here", 540,445)
+
+    if(swish == 1){
+        ctx.fillStyle = 'rgb(0,255,255)'
+        ctx.font = "bold 120px Times New Roman"
+        ctx.fillText("Swish!", 300,250)
+    }
+    else if(swish == 2){
+        ctx.fillStyle = 'rgb(255,0,0)'
+        ctx.font = "bold 40px Times New Roman"
+        ctx.fillText("You stepped past the line!", 230, 350)
+    }
+    else if(swish == 3){
+        ctx.fillStyle = 'rgb(0,255,255)'
+        ctx.font = "bold 120px Times New Roman"
+        ctx.fillText("Swiiiish!", 230,250)      
+    }
+    else if(swish == 4){
+        ctx.fillStyle = 'rgb(255,0,0)'
+        ctx.font = "bold 40px Times New Roman"
+        ctx.fillText("You missed!", 350, 350)
+    }
+
+
+    graphCurve(inputSign,inputA,inputB,inputC);
+    
+    if(percent == 100 || percent == 0){
+      swish = 0
+    }
+
+
+    // draw the tracking rectangle
+    var xy;
+
+        // this has to be 25
+        var percent = (sliderValue) / 25
+        xy = getQuadraticBezierXYatPercent({
+            x: point1X,
+            y: point1Y
+        }, {
+            x: parabOriginX,
+            y: IntersectY
+        }, {
+            x: point2X,
+            y: point2Y
+        }, percent/4);
+    //this is to see where ball lands and not have it go on past hoop
+
+
+    //if((xy.x<= 165 - ball.width * .6 / 2 ) && (xy.x >= 60 - ball.width * .6 / 2) && (xy.y >=60 - ball.height * .6 / 2) && (xy.y <= 150 - ball.height * .6 / 2)){
+      //drawRect(xy, "red")
+     // alert("yu in")
+      
+
+    
+    
+    drawRect(xy, "red");
+  
+
+
+       //check if they made it or not; swish
+      
+       if(point1X >= 600 && point1X <= 720 && xy.x <= 197 && xy.x >= 187 && xy.y >= 30 && xy.y <= 150 ){
+        console.log("Swish")
+        swish = 1;
+     }
+      else if(point1X <= 600 || point1X >= 720){
+        swish = 2;
+        console.log("travelled while shooting")
+      }
+      else if(slope >= 15 && xy.x <= 180 && xy.x >= 60){
+        swish = 3;
+        console.log("Swiiiiish")
+
+      }
+      else if(slope <15 && xy.x <= 197 && xy.x >= 187 && (xy.y <= 30 || xy.y >= 150)){
+        swish = 4
+        console.log("BRICK")
+
+      }
+
+
+}
+
+
+// draw tracking rect at xy
+function drawRect(point, color) {
+    ctx.fillStyle = "cyan";
+    ctx.strokeStyle = "gray";
+    ctx.lineWidth = 3;
+
+
+
+
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, 55, 0, 6.28, false); //draw the circle
+    ctx.clip(); //call the clip method so the next render is clipped in last path
+    ctx.closePath();
+
+
+
+    
+    ctx.drawImage(ball, point.x - ball.width * .6 / 2, point.y - ball.height * .6 / 2, ball.width * 0.6, ball.height * 0.6);
+    
+    ctx.restore();
+
+
+    //ctx.rect(point.x - 13, point.y - 8, 25, 15);
+   
+}
+
+
+     
+
+
+
+
+// quadratic bezier: percent is 0-1
+function getQuadraticBezierXYatPercent(startPt, controlPt, endPt, percent) {
+    var x = Math.pow(1 - percent, 2) * startPt.x + 2 * (1 - percent) * percent * controlPt.x + Math.pow(percent, 2) * endPt.x;
+    var y = Math.pow(1 - percent, 2) * startPt.y + 2 * (1 - percent) * percent * controlPt.y + Math.pow(percent, 2) * endPt.y;
+    return ({
+        x: x,
+        y: y
+    });
+}
+
