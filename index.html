@@ -1,12 +1,10 @@
-
 <!DOCTYPE html>
 
 <html>
 
 <head>
-  <link rel="stylesheet" href="css/index.css">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 
 <body>
@@ -18,14 +16,13 @@
       </li>
     </ul>
     <div class="btn-group">
-      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-        aria-expanded="false">
+      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Games
       </button>
       <div class="dropdown-menu">
         <a class="dropdown-item" href="index.html#games">All Games</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="#">Game 1</a>
+        <a class="dropdown-item" href="fractiongame/">Fraction Game</a>
         <a class="dropdown-item" href="#">Game 2</a>
         <a class="dropdown-item" href="#">Game 3</a>
         <a class="dropdown-item" href="#">Game 4</a>
@@ -51,7 +48,7 @@
           </div>
           <div class="row">
             <div class="col">
-              <h2 class="gameName">Game 1</h2>
+              <h2 class="gameName" onclick="location.href='fractiongame/';">Fraction Game</h2>
               <p class="gameDesciption">Short Description</p>
             </div>
           </div>
@@ -135,57 +132,12 @@
     </div>
   </div>
 
-  <!-- <hr> -->
-
-  <!-- <div class="container-fluid" id="about">
-    <div class="row">
-      <div class="col text-center">
-        <h1 class="title text-center">About Us</h1>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-3 col-sm-6 text-center">
-        <div class="personImgBox">
-          <img class="personImg"
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQwAAAC8CAMAAAC672BgAAABBVBMVEX39/f2m3b4wJ0zMzNNTU3////3+fr3+/11TCT9xKAtLS36nXdBSEr8/Pz4vZhfX18jKSz2lm6vi3S6gmz2pob449dHR0clJSU9PT2enp72rYz2lGv33dMbGxtaWlr41cBCQkLHx8f37+r4yKr2n3z4zrStra04ODgYGBhpOAB1dXWNjY1SUlLX19e3t7f35dv43Mvq6upnZ2eVlZVuQQ0AGSLvlX/2uqP2spf2ybj3tJDe3t55eXm/saXg2tR9WDW5qZwGBgalg27InYJrWk+Bc2rZqowACBpxXlLxm4T3waz3qoXBkH0xOTzBwcGIZ0poSS1HOCuSeGKtmYjSyMBTST9nMwCuzdREAAAI+UlEQVR4nO2d+XvaNhzGHRzJlE5KnRGgHDExkEAuQ0ITIEez7Czdmq3X//+nTLItX9jG6Vb82F+/vzQQ6CN/eL+HZAVJUqFChQoVKlSoUKFChQCKoEiRtMe2aZHz450I7R9Co3HaqUSp8xoWDLJTlyNVhwWDHAyjWcCCwVLnSYwxIMFAk8OTk9MYFoBgoPNOvR7nC0AwyNlPsSBAwUAnlQKGENovYDgqYHiUBEbnQwHDdUbag9yUEsAYngMxhgfGqwjV71Dag9yUBIxK43E3VD/TPZz2IDclAaNbehEhSDC2TRivHl+UIgQJRsNKGLsFDA6jwpJkpYDBhWry48+7v7wpYDChX83MuVvA4LKu2IvCh+UFIBh4j5ZmV03f5e/+5nn0CAmGRktX1B8Xb3554YL5HVDThce01CwFYNRcGI9vduHAkPSALRiAPzzJ9LcjQGFiWiNIw2LRrEJLoIyG0QvSsCTyKiQYElZWQ8WCcbUAByMsb5gQZjN4zgiB4T5eFDDeOU9cMRgGKBhSEEZVtB70HTgYOFhP6JWwCKNC9bTHt1Gt9hrNd5ZD+D9USXt8m9VqOWleVZvVKxPJAFSUSJIyWC2us+aMAqysXKGdhqW0h7Zx8WWNcAE0hqRo4TRoDx6LaBppjysdKSGRQnsSRGMwYb3nx0GplvaYUpRieElQTQdqC0vKdXNhuYNqBtQIEWIwbL0HjgJjBQ8WC5tG2qNJUVhRJH3eVBdOzmhjkNZgIPTxdX9LVbe2nFsotNVvA5utchJSe9lvcRCmBIz3W1uta1DeYCTGM9UBwdW3WCz4z2oTDg0Ft2c+EBYNVlsX762f1WsgkaLo860VEkG12hC8oejLVVOEqJ9/GBjPW0lQsEBZ5j1QsF5NhsIMlHzTwMbWS++HrzZjvZHr2Ro2PLZQ1Vlbmcf7JMc0sO5eurq11BWsVOMjpZ/bORvWPa6YSzwh6OsSSD+v3sCODVpLE4WE2+uzqZ7LLKpciyt/KcoEXpMyTBPlsaYo45aNwrW+yydGrXnuaLjJs+omxXX50/bGLG9pVBEdhbdA4CQseOXJV6i4DYWvPLTiGFSbThC1ZnnKoyJI/HNRPR4GdmmwWhyyFpjN6FFm1mWpvmSIjXgYCp55urT+OIADY2OzV/H/CLetq1abPrP7uvMwGCy6PLjUviYpLg9F71Ete97Aet++Hv8WrTU9F4MhKW3vMhDr4Q3F4oEljZaoofCbDKlc1LcJ63t27AcXrxLAYBc988aS2uovDb6ovleipd6eMdYGvXF2aGCDUnuRdxaoCElgBM3Bc6lanS2pfVOWqZSZQmPvNuA01OA+xmQwmDmWwcUx9b21kt4baOO9zBQVLPah0EAlMX+ZDAbPlcG1dOeOU28w0LKxWRRLPUoHNo3VBd7EMPhfH1z73CHuRZpxko2aorMsp4lhr+58Tg7DxDHvu/ZYuFEyzoYz+D4+wSJs5/NzYPCXK8a8qnK9VKljjNIgK/nT0CjtWbvD6epvnwnDuk/dni+vZ9cmjMFgwMJwkQljmOmTDuwdwCHbwJ8Nw3wTI8KYmNmCBcrYyMrCIKZ0zHmUqBbWDXwTDPutkm5oPQ4kM4VV0vUx48FY7NHe/wqDv5vN24xxhjYR47HpjZJkhNW//wbD/B+ytMcHawtNp6yq4rDI/u8wMiZdGdCo4gcOBsMRudcXIIzodA8RRqRwu/UyRsBg3P8Ypz+hfJOdKXLw1w8xugDzVXambhrb0aqdwIIhxcHoQvlaVFvkuBYNo3EADMZhN8YaaY9u05pEw6hdAksZErqMjJPGJO3BbV5R1ui+hmYMljU+HIUHyQ6s7GkJvQ4rr7VtgEEicRqr3qht30A0hsSPsmgEsmj3YgKUBcsbk1tfqNQA5k6P0MGpt6qcQg0SS0TyNRyNM9A0JKnu67gOQEfKzVCuFTQskbOOLHvT6BFgGuQDgyF7Ow7AeYMcWodm1dxY6YKtKeTSgtE9cWOlC7X1QrfmGQ6VU89cpbaf9qhSEjq1YFwgdOjSOIZpDWSdgFO5RWyu4uTRLrjVLlOTuntQmIfGEZSzsrwy2wwOwzwPyhMpXYDrGqKydqzmws2itQt41hCnMNYn4rGYxTYOwaUNu5jIsniCXIjuC+AquRUlrM0QTzh3VGq3wKwh8mfFvddMDkRJgTZJIa/tyuo5BB6d1GDmULRT8RYTW1Dnr/Zh6EPvc+RDQ3TlkLIGObfz577vqtGOsMZNWiNLQejC7jIuffFADmxrgNq2MrFqidwJbE8hwhr7cGAge2FHrgR+Qc678OLEPsG2spIoRefVhXOer91khJxtjew9X7VLKDBExliJEnfPF5jiio7tOVp9dVmLnImpPAxnoHNhjE7Y9NSeoBxtfFxpiNzYCUOuh20IRrDaroY4Db0SZgx0a2VQGBtkdwSLzmHY5RJ7pwKE2kouRJBUdkLrhSgnABpyl0V4kPCZaxdGo0Ekl8UwIieI2pr3tT8y2XZZRG5pmzQgdF3oTBa5U+7E/JmN3XWFp5ScCB12HBb1uI9dTOLzC4NIx0PZ8UVsPji1aeQWBjo4qidk4azv5LWaTG5dW8jD+F0H6MJeFN7U4Dats58cFJXOebz/nRWNDY1t43JWc+R642xNLhCTk7zCwOTBLiTDY2ldKnBg5PP2M7p5mv5t2qKyJkTMV+caBroblcvlfyqV4XGSnY3ijmseYZDJE2cx/Shvr8sWlhwY33tkmxe5mzIU5dEndEOSNQ55hvGZ+2J0l7yddDYmfMdRpSX0aVqe3j+jtRYJNJ/t+Nty+e3nZzjDhnGaRxjkfsRzRuKZht2B1vI5heeB8gwa5OT4y5cv+7c5XfYjb80cmvTikD5ilRjlk4UVKOVR4tdP2MufcsqCfdYPLFCmia3BYZTZhAaRyYSgDH2VXzKRJ3Z5j0kzIocxlaS7j+XptPx4nzePYB4oHxOXBw7jYWq2ruXp18SOyorQw2iavLqak5my0Og+b5FCnr7eJ37x16mr0WiUu2SK7z8ljhL8cGfqs9D3HFg6esbHS/zKW5QUKlSoUKFChQoVKlQooH8B/dvnDpsNn9IAAAAASUVORK5CYII=" />
-          <h2 class="name">Aniket Gupta</h2>
-          <p class="personalDescription">Short Description on us</p>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6 text-center">
-        <div class="personImgBox">
-          <img class="personImg"
-            src="data:image/png;base64,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" />
-          <h2 class="name">Aniket Gupta</h2>
-          <p class="personalDescription">Short Description on us</p>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6 text-center">
-        <div class="personImgBox">
-          <img class="personImg"
-            src="data:image/png;base64,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" />
-          <h2 class="name">Aniket Gupta</h2>
-          <p class="personalDescription">Short Description on us</p>
-        </div>
-      </div>
-      <div class="col-md-3 col-sm-6 text-center">
-        <div class="personImgBox">
-          <img class="personImg"
-            src="data:image/png;base64,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" />
-          <h2 class="name">Aniket Gupta</h2>
-          <p class="personalDescription">Short Description on us</p>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
-
   <footer class="page-footer font-small pt-4">
     <div class="container-fluid text-center text-md-left">
       <div class="row">
         <div class="col-md-9 mt-md-0 mt-3">
           <h5 class="text-uppercase">Why we made this</h5>
-          <p>Shot description on why we made this. </p>
+          <p>Short description on why we made this. </p>
         </div>
         <hr class="clearfix w-100 d-md-none pb-3">
         <div class="col-md-3 mb-md-0 mb-3">
@@ -213,21 +165,11 @@
         </div>
       </div>
     </div>
-    <div class="footer-copyright text-center py-3">© 2020 Copyright:
-      <a href="https://mdbootstrap.com/"> </a>
-    </div>
   </footer>
 
-
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-    crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 
 </html>
