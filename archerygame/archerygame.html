@@ -150,170 +150,86 @@ function checkAns() {
 
     function animate() {
 
-// set the animation position (0-100)
-percent += direction;
-if (percent < 0) {
-    percent = 0;
-    direction = 1;
-};
+        // set the animation position (0-100)
+        percent += direction;
+        if (percent < 0) {
+            percent = 0;
+            direction = 1;
+        };
+        if(percent > 100) {
+            percent = 100;
+            direction = -1;
+        };
 
-draw(percent);
+        draw(percent);
 
-if (percent < 100){
-// request another frame
-setTimeout(function () {
-    requestAnimationFrame(animate);
-}, 1000 / fps);
-
-}
-}
-
-
-// draw the current frame based on sliderValue
-function draw(sliderValue) {
-
-// redraw path
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-ctx.lineWidth = 5;
+        if (percent < 100) {
+            // request another frame
+            setTimeout(function () {
+                requestAnimationFrame(animate);
+            }, 1000 / fps);
+        }
+    }
 
 
+    // draw the current frame based on sliderValue
+    function draw(sliderValue) {
 
-ctx.strokeStyle = 'black';
-drawTarget();
-drawGraph();
+        // redraw path
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 5;
 
+        ctx.strokeStyle = 'black';
+        drawTarget();
+        drawGraph();
 
-//show start point
+        var xy;
+        var percent = sliderValue / 24;
+        xy = getLineXYatPercent({
+            x:100,
+            y:20
+        }, {
+            x:200,
+            y:160
+        }, percent);
+        drawRect(xy, "red");
+    }
 
+    // draw tracking rect at xy
+    function drawRect(point, color) {
+        ctx.fillStyle = "cyan";
+        ctx.strokeStyle = "gray";
+        ctx.lineWidth = 3;  
+        ctx.save();
+        ctx.beginPath();
+        //                                       mess around with numbers
+        //ctx.drawImage(arrow, point.x - arrow.width * .6 / 2, point.y - arrow.height * .6 / 2, arrow.width * 0.6, arrow.height * 0.6);
+        ctx.rect(point.x - 13, point.y - 8, 25, 15);
+        ctx.fill();
+        ctx.stroke();
+    }
 
-ctx.strokeStyle = 'rgb(0,255,0)'
-ctx.fillStyle = 'blue'   
-ctx.beginPath();
-ctx.arc(660,480,5,0,6.28);
-ctx.fill();
-ctx.strokeStyle= "black"; 
-ctx.lineWidth = 2;
-ctx.font = "bold 30px Arial"
-ctx.fillText("Start your shot here", 540,445)
-ctx.strokeText("Start your shot here", 540,445)
-//arrow; determine results
-if(swish == 1){
-    ctx.fillStyle = 'rgb(0,255,255)'
-    ctx.font = "bold 120px Times New Roman"
-    ctx.fillText("Swish!", 300,250)
-}
-else if(swish == 2){
-    ctx.fillStyle = 'rgb(255,0,0)'
-    ctx.font = "bold 40px Times New Roman"
-    ctx.fillText("You stepped past the line!", 230, 350)
-}
-else if(swish == 3){
-    ctx.fillStyle = 'rgb(0,255,255)'
-    ctx.font = "bold 120px Times New Roman"
-    ctx.fillText("Swiiiish!", 230,250)      
-}
-else if(swish == 4){
-    ctx.fillStyle = 'rgb(255,0,0)'
-    ctx.font = "bold 40px Times New Roman"
-    ctx.fillText("You missed!", 350, 350)
-}
+    //draw tracking dot at xy
+    function drawDot(point,color){
+        ctx.fillStyle=color;
+        ctx.strokeStyle="black";
+        ctx.lineWidth=3;
+        ctx.beginPath();
+        ctx.arc(point.x,point.y,8,0,Math.PI*2,false);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    }
 
-if(percent == 100 || percent == 0){
-  swish = 0
-}
-
-
-// draw the tracking rectangle
-var xy;
-    var point1X = 600;
-    var point1Y = 0;
-    var point2X = h;
-    var point2Y = k;
-    // this has to be 25
-    var percent = (sliderValue) / 25
-    xy = getQuadraticBezierXYatPercent({
-        x: point1X,
-        y: point1Y
-    }, {
-        x: point2X,
-        y: point2Y
-    }, percent/4);
-    //might have to change percent^^
-//this is to see where ball lands and not have it go on past hoop
-
-
-//if((xy.x<= 165 - ball.width * .6 / 2 ) && (xy.x >= 60 - ball.width * .6 / 2) && (xy.y >=60 - ball.height * .6 / 2) && (xy.y <= 150 - ball.height * .6 / 2)){
-  //drawRect(xy, "red")
- // alert("yu in")
-  
-
-
-
-drawRect(xy, "red");
-
-
-
-   //check if they made it or not; swish
-   if(point1X >= 600 && point1X <= 720 && xy.x <= 197 && xy.x >= 187 && xy.y >= 30 && xy.y <= 150 ) {
-    console.log("Swish")
-    swish = 1;
- }
-  else if(point1X <= 600 || point1X >= 720){
-    swish = 2;
-    console.log("travelled while shooting")
-  }
-  else if(slope >= 15 && xy.x <= 180 && xy.x >= 60){
-    swish = 3;
-    console.log("Swiiiiish")
-
-  }
-  else if(slope <15 && xy.x <= 197 && xy.x >= 187 && (xy.y <= 30 || xy.y >= 150)){
-    swish = 4
-    console.log("BRICK")
-
-  }
-
-
-}
-
-
-// draw tracking rect at xy
-function drawRect(point, color) {
-ctx.fillStyle = "cyan";
-ctx.strokeStyle = "gray";
-ctx.lineWidth = 3;  
-
-ctx.save();
-ctx.beginPath();
-//make a narrow rectangle
-ctx.arc(point.x, point.y, 55, 0, 6.28, false); //draw the circle
-ctx.clip(); //call the clip method so the next render is clipped in last path
-ctx.closePath();
-
-
-
-//                                       mess around with numbers
-ctx.drawImage(arrow, point.x - arrow.width * .6 / 2, point.y - arrow.height * .6 / 2, arrow.width * 0.6, arrow.height * 0.6);
-
-ctx.restore();
-
-
-//ctx.rect(point.x - 13, point.y - 8, 25, 15);
-
-}
-
-// quadratic bezier: percent is 0-1
-function getQuadraticBezierXYatPercent(h, k, percent) {
-var x = 600 - h;
-x = x / 100 * percent;
-var y = 0 + k;
-y = y / 100 * percent;
-return ({
-    x: x,
-    y: y
-});
-}
+    // quadratic bezier: percent is 0-1
+    // line: percent is 0-1
+    function getLineXYatPercent(startPt,endPt,percent) {
+        var dx = endPt.x-startPt.x;
+        var dy = endPt.y-startPt.y;
+        var X = startPt.x + dx*percent;
+        var Y = startPt.y + dy*percent;
+        return( {x:X,y:Y} );
+    }
 
 }
 
