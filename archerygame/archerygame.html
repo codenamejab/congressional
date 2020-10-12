@@ -165,8 +165,16 @@ function checkAns() {
             arrowy+=(-30 * centery + 300 - 100)/100;
         }, 10);
     }
-    function endanime() {
+    function endanimate() {
         clearInterval(animate);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 5;
+
+        ctx.strokeStyle = 'black';
+        drawTarget();
+        drawGraph();
+        ctx.drawImage(arrow, centerx, centery - 95, 100, 100);
+        alert("Correct! Refresh the page for a new question")
     }
 
     /*
