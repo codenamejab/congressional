@@ -12,8 +12,8 @@ div.a {
 <div class = "a" id = "myDIV">
 <h1 id="TB" style = "color:black;">Hit the target!</h1>
 <h2 style = "color:black;">Using the input box below, write the equation of the target in (x - h)^2 + (y - k)^2 = r^2 form</h2>
-<h3 id="nums"></h3>
-
+<!-- <h3 id="nums"></h3> -->
+<h3 id = "nums"></h3>
 <br>
 
 <input type="text" id="ans"> </input>
@@ -114,7 +114,7 @@ function checkAns() {
         if(text.charAt(i) != ' ') newstr+=text.charAt(i);
     }
     //document.getElementById("nums").innerHTML = newstrnospace;
-    document.getElementById("nums").innerHTML = newstr;
+    //document.getElementById("nums").innerHTML = newstr;
     try {
         if(newstr.substring(0, 2) != '(x') {
             throw "invalid syntax!x"
@@ -146,8 +146,8 @@ function checkAns() {
         alert("Incorrect! Please try again!")
         return
     }
-    var arrowx = 500;
-    var arrowy = 0;
+    var arrowx = 495;
+    var arrowy = 5;
     function animate() {
         animate = setInterval(function() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -158,7 +158,6 @@ function checkAns() {
             drawGraph();
             ctx.drawImage(arrow, arrowx, arrowy, 100, 100);
             if(arrowx <= (centerx + 10) * 30 - 100 || arrowy >= -30 * centery + 300 - 100) {
-                alert("Correct! Refresh the page for a new question")
                 endanimate();
                 return;
             }
@@ -231,7 +230,7 @@ function checkAns() {
         //ctx.beginPath();
         //                                       mess around with numbers
         ctx.drawImage(arrow, point.x - 100, point.y - 100, 100, 100);
-        console.log("Printed!");
+        //console.log("Printed!");
         //ctx.rect(point.x - 13, point.y - 8, 20, 20);
         //ctx.fill();
         //ctx.stroke();
