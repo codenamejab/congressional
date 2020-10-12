@@ -13,7 +13,6 @@ div.a {
 <h1 id="TB" style = "color:black;">Hit the target!</h1>
 <h2 style = "color:black;">Using the input box below, write the equation of the target in (x - h)^2 + (y - k)^2 = r^2 form</h2>
 <!-- <h3 id="nums"></h3> -->
-<h3 id = "nums"></h3>
 <br>
 
 <input type="text" id="ans"> </input>
@@ -54,7 +53,7 @@ function calculateRadius() {
     if(restrict >= 7) var randindex = Math.floor(Math.random() * 7);
     else var randindex = Math.floor(Math.random() * restrict);
     radius = possibles[randindex];
-    document.getElementById("nums").innerHTML = centerx + " " + centery + " " + (radius / 60);
+    //document.getElementById("nums").innerHTML = centerx + " " + centery + " " + (radius / 60);
 }
 
 function drawTarget() {
