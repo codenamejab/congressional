@@ -35,12 +35,12 @@ arrow.src = 'archerygame/assets/arrow.png';
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-var centerx = 1;//Math.floor(Math.random() * 17) - 8;
-while(centerx == 0) {
+var centerx = Math.floor(Math.random() * 17) - 8;
+while(centerx == 0 || centerx == 7 || centerx == 8 || centerx == 9) {
     centerx = Math.floor(Math.random() * 17) - 8;
 }
-var centery = 1;//Math.floor(Math.random() * 17) - 8;
-while(centery == 0) {
+var centery = Math.floor(Math.random() * 17) - 8;
+while(centery == 0 || centery == 7 || centery == 8 || centery == 9) {
     centery = Math.floor(Math.random() * 17) - 8;
 }
 var radius = 0;
@@ -60,9 +60,10 @@ function calculateRadius() {
 function drawTarget() {
     ctx.drawImage(target, (centerx + 10) * 30 - (radius / 2) - (radius / 30), -30 * centery + 300 - (radius / 2) - (radius / 30), radius + (radius / 30) * 2, radius + (radius / 30) * 2);
     //ctx.drawImage(target, 0, 0, 100, 100);
+    //ctx.drawImage(arrow, 0, 0, 100, 100);
 }
 
-ctx.drawImage(arrow, 0, 0, 10, 10);
+//ctx.drawImage(arrow, 0, 0, 10, 10);
 
 function drawGraph() {
     //vert lines
@@ -84,6 +85,9 @@ function drawGraph() {
         ctx.lineTo(600, i * 30);
         ctx.stroke();
     }
+    //ctx.beginPath();
+    //ctx.rect(500, 0, 100, 100);
+    //ctx.stroke();
 }
 
 function checkAns() {
@@ -142,11 +146,34 @@ function checkAns() {
         alert("Incorrect! Please try again!")
         return
     }
+    var arrowx = 500;
+    var arrowy = 0;
+    function animate() {
+        animate = setInterval(function() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 5;
 
+            ctx.strokeStyle = 'black';
+            drawTarget();
+            drawGraph();
+            ctx.drawImage(arrow, arrowx, arrowy, 100, 100);
+            if(arrowx <= (centerx + 10) * 30 - 100 || arrowy >= -30 * centery + 300 - 100) {
+                alert("Correct! Refresh the page for a new question")
+                endanimate();
+                return;
+            }
+            arrowx-=(400-((centerx + 10) * 30 - 100))/100;
+            arrowy+=(-30 * centery + 300 - 100)/100;
+        }, 10);
+    }
+    function endanime() {
+        clearInterval(animate);
+    }
+
+    /*
     var fps = 60;
     var percent = 0;
     var direction = 1;
-    var swish = 0;
 
     function animate() {
 
@@ -156,11 +183,6 @@ function checkAns() {
             percent = 0;
             direction = 1;
         };
-        if(percent > 100) {
-            percent = 100;
-            direction = -1;
-        };
-
         draw(percent);
 
         if (percent < 100) {
@@ -170,7 +192,7 @@ function checkAns() {
             }, 1000 / fps);
         }
     }
-
+    */
 
     // draw the current frame based on sliderValue
     function draw(sliderValue) {
@@ -182,31 +204,37 @@ function checkAns() {
         ctx.strokeStyle = 'black';
         drawTarget();
         drawGraph();
-
+        /*
+        ctx.beginPath();
+        ctx.moveTo(600, 0);
+        ctx.lineTo((centerx + 10) * 30, -30 * centery + 300);
+        ctx.strokeStyle = "red";
+        ctx.stroke();
+        */
         var xy;
-        var percent = sliderValue / 24;
+        var percent = sliderValue / 100;
         xy = getLineXYatPercent({
-            x:100,
-            y:20
+            x:600,
+            y:0
         }, {
-            x:200,
-            y:160
+            x:(centerx + 10) * 30,
+            y:-30 * centery + 300
         }, percent);
         drawRect(xy, "red");
     }
 
     // draw tracking rect at xy
     function drawRect(point, color) {
-        ctx.fillStyle = "cyan";
-        ctx.strokeStyle = "gray";
-        ctx.lineWidth = 3;  
-        ctx.save();
-        ctx.beginPath();
+        //ctx.fillStyle = "cyan";
+        //ctx.strokeStyle = "gray";
+        //ctx.lineWidth = 3;  
+        //ctx.beginPath();
         //                                       mess around with numbers
-        //ctx.drawImage(arrow, point.x - arrow.width * .6 / 2, point.y - arrow.height * .6 / 2, arrow.width * 0.6, arrow.height * 0.6);
-        ctx.rect(point.x - 13, point.y - 8, 25, 15);
-        ctx.fill();
-        ctx.stroke();
+        ctx.drawImage(arrow, point.x - 100, point.y - 100, 100, 100);
+        console.log("Printed!");
+        //ctx.rect(point.x - 13, point.y - 8, 20, 20);
+        //ctx.fill();
+        //ctx.stroke();
     }
 
     //draw tracking dot at xy
@@ -228,9 +256,11 @@ function checkAns() {
         var dy = endPt.y-startPt.y;
         var X = startPt.x + dx*percent;
         var Y = startPt.y + dy*percent;
-        return( {x:X,y:Y} );
+        return({
+            x:X,
+            y:Y
+        });
     }
-
 }
 
 </script>
