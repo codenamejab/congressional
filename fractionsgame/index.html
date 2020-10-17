@@ -85,6 +85,7 @@
       var ctx = canvas.getContext("2d");
 
       //scale factor
+      denominator = 1;
       while ([1, 5, 7, 10, 11].includes(denominator)) {
         denominator = Math.floor(Math.random() * 12 + 1);
       }
