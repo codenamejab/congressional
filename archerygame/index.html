@@ -18,11 +18,9 @@
         <a class="dropdown-item" href="../index.html">All Games</a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="../fractionsgame/">Fraction Game</a>
-        <a class="dropdown-item" href="../archerygame/">Archery game</a>
-        <a class="dropdown-item" href="#">Game 3</a>
-        <a class="dropdown-item" href="#">Game 4</a>
-        <a class="dropdown-item" href="#">Game 5</a>
-        <a class="dropdown-item" href="#">Game 6</a>
+        <a class="dropdown-item" href="../archerygame/">Archery Game</a>
+        <a class="dropdown-item" href="../basketball/">Basketball Game</a>
+        <a class="dropdown-item" href="../8ball">8Ball Game</a>
       </div>
     </div>
   </nav>
@@ -30,7 +28,7 @@
   <div class="container-fluid text-center">
     <div class="row">
       <div class="col">
-        <h1 class="title text-center">Fractions Game</h1>
+        <h1 class="title text-center">Archery Game</h1>
       </div>
     </div>
     <div class="row">
@@ -51,11 +49,11 @@
 
           <div id="hints" style="padding-top: 10px;">
             <button class="btn" id="hint1btn" style="background-color: yellow;">Hint 1</button>
-            <h4 id="hint1" style="display: none;">1. You can see that the number of pieces of the cake eaten is <span class="numerator">2</span>, and the total number of pieces of cake is <span class="denominator">4</span></h4>
+            <h4 id="hint1" style="display: none;">1. You can see that x value of the <strong>center</strong> of the target is <span class="centerx"></span>, and the y value of the <strong>center</strong> of the target is <span class="centery"></span></h4>
             <button class="btn" id="hint2btn" style="background-color: yellow; display: none;">Hint 2</button>
-            <h4 id="hint2" style="display: none;">2. The fraction of the cake that has been eaten is the pieces of cake eaten / total pieces of cake. </h4>
+            <h4 id="hint2" style="display: none;">2. The radius of the target is <span class="radius"></span>. Plug in these values into the equation given. </h4>
             <button class="btn" id="hint3btn" style="background-color: yellow; display: none;">I don't know</button>
-            <h4 id="hint3" style="display: none;">3. So, the fraction of the cake that has been eaten is <span class="numerator">2</span>/<span class="denominator">4</span></h4>
+            <h4 id="hint3" style="display: none;">3. The equation of the target is <span class="equation"></span></h4>
             <button class="btn" id="hint4btn" onclick="newQuestion()" style="background-color: yellow; display: none;">New Question</button>
           </div>
         </div>
@@ -70,13 +68,16 @@
 
   <script>
     window.onload = execute;
-    var animate;
+    var animateInterval;
     var centerx;
     var centery;
     var radius;
     var canvas;
     var ctx;
     var target;
+    var arrowx;
+    var arrowy;
+    var occurring = false;
 
     function execute() {
       target = document.getElementById("targetpic");
@@ -93,7 +94,29 @@
       while (centery == 0 || centery == 7 || centery == 8 || centery == 9) {
         centery = Math.floor(Math.random() * 17) - 8;
       }
-      radius = calculateRadius();;
+      radius = calculateRadius();
+
+      var equation = "(x";
+      console.log(centerx);
+      console.log(centery);
+      if (centerx < 0) {
+        equation += "+" + (centerx * -1);
+      } else {
+        equation += "-" + centerx;
+      }
+      equation += ")^2+(y"
+      if (centery < 0) {
+        equation += "+" + (centery * -1);
+      } else {
+        equation += "-" + centery;
+      }
+      equation += ")^2=" + ((radius / 60) * (radius / 60));
+
+      document.querySelectorAll(".centerx").forEach(e => e.innerHTML = centerx);
+      document.querySelectorAll(".centery").forEach(e => e.innerHTML = centery);
+      document.querySelectorAll(".radius").forEach(e => e.innerHTML = radius / 60);
+      document.querySelectorAll(".equation").forEach(e => e.innerHTML = equation);
+
       drawTarget();
       drawGraph();
     }
@@ -145,14 +168,17 @@
         if (!text.includes("y")) {
           result.innerHTML = "No \"y\" detected!";
           result.style.display = "block";
+          return;
         }
         if (!text.includes("=")) {
           result.innerHTML = "No equal sign detected!";
           result.style.display = "block";
+          return;
         }
         if (!text.includes("x")) {
           result.innerHTML = "No equal sign detected!";
           result.style.display = "block";
+          return;
         }
       } catch (e) {
         alert("ERROR = " + e)
@@ -169,18 +195,22 @@
         if (newstr.substring(0, 2) != '(x') {
           result.innerHTML = "invalid syntax!x";
           result.style.display = "block";
+          return;
         }
         if (newstr.substring(4, 10) != ')^2+(y') {
           result.innerHTML = "invalid syntax!y";
           result.style.display = "block";
+          return;
         }
         if (newstr.substring(12, 16) != ')^2=') {
           result.innerHTML = "invalid syntax!end";
           result.style.display = "block";
+          return;
         }
         if (newstr.substring(newstr.length - 2, newstr.length) == '^2') {
           result.innerHTML = "simplify your radius!";
           result.style.display = "block";
+          return;
         }
       } catch (e) {
         alert("ERROR  = " + e)
@@ -195,92 +225,136 @@
       } else {
         result.innerHTML = "Incorrect! Please try again!";
         result.style.display = "block";
-        return
+        return;
       }
-      var arrowx = 495;
-      var arrowy = 5;
 
-      function animate() {
-        animate = setInterval(function() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.lineWidth = 5;
+      arrowx = 495;
+      arrowy = 5;
+    }
 
-          ctx.strokeStyle = 'black';
-          drawTarget();
-          drawGraph();
-          ctx.drawImage(arrow, arrowx, arrowy, 100, 100);
-          if (arrowx <= (centerx + 10) * 30 - 100 || arrowy >= -30 * centery + 300 - 100) {
-            endanimate();
-            return;
+    function animate() {
+      animateInterval = setInterval(function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 5;
+
+        ctx.strokeStyle = 'black';
+        drawTarget();
+        drawGraph();
+        ctx.drawImage(arrow, arrowx, arrowy, 100, 100);
+        if (arrowx <= (centerx + 10) * 30 - 100 || arrowy >= -30 * centery + 300 - 100) {
+          endanimate();
+          return;
+        }
+        arrowx -= (400 - ((centerx + 10) * 30 - 100)) / 100;
+        arrowy += (-30 * centery + 300 - 100) / 100;
+      }, 10);
+    }
+
+    function endanimate() {
+      clearInterval(animateInterval);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.lineWidth = 5;
+
+      ctx.strokeStyle = 'black';
+      drawTarget();
+      drawGraph();
+      ctx.drawImage(arrow, centerx, centery - 95, 100, 100);
+      result.innerHTML = "Correct!";
+      result.style.display = "block";
+    }
+
+    // draw the current frame based on sliderValue
+    function draw(sliderValue) {
+
+      // redraw path
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.lineWidth = 5;
+
+      ctx.strokeStyle = 'black';
+      drawTarget();
+      drawGraph();
+      var xy;
+      var percent = sliderValue / 100;
+      xy = getLineXYatPercent({
+        x: 600,
+        y: 0
+      }, {
+        x: (centerx + 10) * 30,
+        y: -30 * centery + 300
+      }, percent);
+      drawRect(xy, "red");
+    }
+
+    // draw tracking rect at xy
+    function drawRect(point, color) {
+      ctx.drawImage(arrow, point.x - 100, point.y - 100, 100, 100);
+    }
+
+    //draw tracking dot at xy
+    function drawDot(point, color) {
+      ctx.fillStyle = color;
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 8, 0, Math.PI * 2, false);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    // quadratic bezier: percent is 0-1
+    // line: percent is 0-1
+    function getLineXYatPercent(startPt, endPt, percent) {
+      var dx = endPt.x - startPt.x;
+      var dy = endPt.y - startPt.y;
+      var X = startPt.x + dx * percent;
+      var Y = startPt.y + dy * percent;
+      return ({
+        x: X,
+        y: Y
+      });
+    }
+
+
+    function newQuestion() {
+      hideAllHintButtons();
+      document.getElementById("result").style.display = "none";
+      document.getElementById(`hint1btn`).style.display = "inline-block";
+      document.getElementById("ans").value = "";
+      if (!occurring) {
+        var opacity = 1;
+        var interval = setInterval(function() {
+          occurring = true;
+          opacity -= 0.01;
+          document.getElementById("myCanvas").style.opacity = opacity;
+
+          if (opacity <= 0) {
+            occurring = false;
+            execute();
+            document.getElementById("myCanvas").style.opacity = 1;
+            clearInterval(interval);
           }
-          arrowx -= (400 - ((centerx + 10) * 30 - 100)) / 100;
-          arrowy += (-30 * centery + 300 - 100) / 100;
-        }, 10);
+        }, 1);
       }
+    }
 
-      function endanimate() {
-        clearInterval(animate);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.lineWidth = 5;
+    for (var i = 1; i <= 3; i++) {
+      addHintButtons(i)
+    }
 
-        ctx.strokeStyle = 'black';
-        drawTarget();
-        drawGraph();
-        ctx.drawImage(arrow, centerx, centery - 95, 100, 100);
-        result.innerHTML = "Correct! Refresh the page for a new question!";
-        result.style.display = "block";
-      }
+    function addHintButtons(i) {
+      document.getElementById(`hint${i}btn`).addEventListener("click", function() {
+        document.getElementById(`hint${i}`).style.display = "block";
+        document.getElementById(`hint${i}btn`).style.display = "none";
+        document.getElementById(`hint${i + 1}btn`).style.display = "inline-block";
+      });
+    }
 
-      // draw the current frame based on sliderValue
-      function draw(sliderValue) {
-
-        // redraw path
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.lineWidth = 5;
-
-        ctx.strokeStyle = 'black';
-        drawTarget();
-        drawGraph();
-        var xy;
-        var percent = sliderValue / 100;
-        xy = getLineXYatPercent({
-          x: 600,
-          y: 0
-        }, {
-          x: (centerx + 10) * 30,
-          y: -30 * centery + 300
-        }, percent);
-        drawRect(xy, "red");
-      }
-
-      // draw tracking rect at xy
-      function drawRect(point, color) {
-        ctx.drawImage(arrow, point.x - 100, point.y - 100, 100, 100);
-      }
-
-      //draw tracking dot at xy
-      function drawDot(point, color) {
-        ctx.fillStyle = color;
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, 8, 0, Math.PI * 2, false);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-      }
-
-      // quadratic bezier: percent is 0-1
-      // line: percent is 0-1
-      function getLineXYatPercent(startPt, endPt, percent) {
-        var dx = endPt.x - startPt.x;
-        var dy = endPt.y - startPt.y;
-        var X = startPt.x + dx * percent;
-        var Y = startPt.y + dy * percent;
-        return ({
-          x: X,
-          y: Y
-        });
+    function hideAllHintButtons() {
+      for (var i = 1; i <= 3; i++) {
+        document.getElementById(`hint${i}`).style.display = "none";
+        document.getElementById(`hint${i}btn`).style.display = "none";
+        document.getElementById(`hint${i + 1}btn`).style.display = "none";
       }
     }
   </script>
