@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="../index.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <spam class="navbar-brand" href="#">Math4Fun</spam>
+    <ul class="navbar-nav ml-auto"></ul>
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        All Games
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="../index.html">All Games</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="../fractionsgame/">Fraction Game</a>
+        <a class="dropdown-item" href="../archerygame/">Archery game</a>
+        <a class="dropdown-item" href="#">Game 3</a>
+        <a class="dropdown-item" href="#">Game 4</a>
+        <a class="dropdown-item" href="#">Game 5</a>
+        <a class="dropdown-item" href="#">Game 6</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid text-center">
+    <div class="row">
+      <div class="col">
+        <h1 class="title text-center">Fractions Game</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <canvas class="canvas" id="myCanvas" width="600" height="600"></canvas>
+      </div>
+      <div class="col">
+        <div class="instructions">
+          <h1>Hit the target!</h1>
+          <h2>Using the input box below, write the equation of the target in (x - h)^2 + (y - k)^2 = r^2 form</h2>
+
+          <br>
+
+          <input type="text" id="ans"> </input>
+          <button class="btn" id="checkAns" onclick="checkAns()" style="background-color: yellow;"> Check </button>
+
+          <h3 id="result" style="padding-top: 20px; display: none;">Correct!</h3>
+
+          <div id="hints" style="padding-top: 10px;">
+            <button class="btn" id="hint1btn" style="background-color: yellow;">Hint 1</button>
+            <h4 id="hint1" style="display: none;">1. You can see that the number of pieces of the cake eaten is <span class="numerator">2</span>, and the total number of pieces of cake is <span class="denominator">4</span></h4>
+            <button class="btn" id="hint2btn" style="background-color: yellow; display: none;">Hint 2</button>
+            <h4 id="hint2" style="display: none;">2. The fraction of the cake that has been eaten is the pieces of cake eaten / total pieces of cake. </h4>
+            <button class="btn" id="hint3btn" style="background-color: yellow; display: none;">I don't know</button>
+            <h4 id="hint3" style="display: none;">3. So, the fraction of the cake that has been eaten is <span class="numerator">2</span>/<span class="denominator">4</span></h4>
+            <button class="btn" id="hint4btn" onclick="newQuestion()" style="background-color: yellow; display: none;">New Question</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <img id="targetpic" src="assets/target.png" style="display: none;">
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <script>
+    window.onload = execute;
+    var animate;
+    var centerx;
+    var centery;
+    var radius;
+    var canvas;
+    var ctx;
+    var target;
+
+    function execute() {
+      target = document.getElementById("targetpic");
+      arrow = new Image();
+      arrow.src = 'assets/arrow.png';
+      canvas = document.getElementById("myCanvas");
+      ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      centerx = Math.floor(Math.random() * 17) - 8;
+      while (centerx == 0 || centerx == 7 || centerx == 8 || centerx == 9) {
+        centerx = Math.floor(Math.random() * 17) - 8;
+      }
+      centery = Math.floor(Math.random() * 17) - 8;
+      while (centery == 0 || centery == 7 || centery == 8 || centery == 9) {
+        centery = Math.floor(Math.random() * 17) - 8;
+      }
+      radius = calculateRadius();;
+      drawTarget();
+      drawGraph();
+    }
+
+    function calculateRadius() {
+      var possibles = [60, 120, 180, 240, 300, 360, 420];
+      var restrict = 10 - Math.max(Math.abs(centerx), Math.abs(centery));
+      var randindex;
+      if (restrict >= 7) {
+        randindex = Math.floor(Math.random() * 7);
+      } else {
+        randindex = Math.floor(Math.random() * restrict);
+      }
+
+      return possibles[randindex];
+    }
+
+    function drawTarget() {
+      ctx.drawImage(target, (centerx + 10) * 30 - (radius / 2) - (radius / 30), -30 * centery + 300 - (radius / 2) - (radius / 30), radius + (radius / 30) * 2, radius + (radius / 30) * 2);
+    }
+
+    function drawGraph() {
+      //vert lines
+      for (var i = 1; i <= 21; i++) {
+        ctx.lineWidth = 0.5;
+        if (i == 10) ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(i * 30, 0);
+        ctx.lineTo(i * 30, 600);
+        ctx.stroke();
+      }
+
+      //horz lines
+      for (var i = 1; i <= 21; i++) {
+        ctx.lineWidth = 0.5;
+        if (i == 10) ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, i * 30);
+        ctx.lineTo(600, i * 30);
+        ctx.stroke();
+      }
+    }
+
+    function checkAns() {
+      var text = document.getElementById("ans").value;
+      var result = document.getElementById("result");
+
+      try {
+        if (!text.includes("y")) {
+          result.innerHTML = "No \"y\" detected!";
+          result.style.display = "block";
+        }
+        if (!text.includes("=")) {
+          result.innerHTML = "No equal sign detected!";
+          result.style.display = "block";
+        }
+        if (!text.includes("x")) {
+          result.innerHTML = "No equal sign detected!";
+          result.style.display = "block";
+        }
+      } catch (e) {
+        alert("ERROR = " + e)
+        return
+      }
+      var h = 0;
+      var k = 0;
+      var r = 0;
+      var newstr = "";
+      for (var i = 0; i < text.length; i++) {
+        if (text.charAt(i) != ' ') newstr += text.charAt(i);
+      }
+      try {
+        if (newstr.substring(0, 2) != '(x') {
+          result.innerHTML = "invalid syntax!x";
+          result.style.display = "block";
+        }
+        if (newstr.substring(4, 10) != ')^2+(y') {
+          result.innerHTML = "invalid syntax!y";
+          result.style.display = "block";
+        }
+        if (newstr.substring(12, 16) != ')^2=') {
+          result.innerHTML = "invalid syntax!end";
+          result.style.display = "block";
+        }
+        if (newstr.substring(newstr.length - 2, newstr.length) == '^2') {
+          result.innerHTML = "simplify your radius!";
+          result.style.display = "block";
+        }
+      } catch (e) {
+        alert("ERROR  = " + e)
+        return
+      }
+      h = parseInt(newstr.substring(2, 4)) * -1;
+      k = parseInt(newstr.substring(10, 12)) * -1;
+      r = Math.sqrt(parseInt(newstr.substring(16, newstr.length)));
+
+      if (h == centerx && k == centery && r == radius / 60) {
+        animate();
+      } else {
+        result.innerHTML = "Incorrect! Please try again!";
+        result.style.display = "block";
+        return
+      }
+      var arrowx = 495;
+      var arrowy = 5;
+
+      function animate() {
+        animate = setInterval(function() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.lineWidth = 5;
+
+          ctx.strokeStyle = 'black';
+          drawTarget();
+          drawGraph();
+          ctx.drawImage(arrow, arrowx, arrowy, 100, 100);
+          if (arrowx <= (centerx + 10) * 30 - 100 || arrowy >= -30 * centery + 300 - 100) {
+            endanimate();
+            return;
+          }
+          arrowx -= (400 - ((centerx + 10) * 30 - 100)) / 100;
+          arrowy += (-30 * centery + 300 - 100) / 100;
+        }, 10);
+      }
+
+      function endanimate() {
+        clearInterval(animate);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 5;
+
+        ctx.strokeStyle = 'black';
+        drawTarget();
+        drawGraph();
+        ctx.drawImage(arrow, centerx, centery - 95, 100, 100);
+        result.innerHTML = "Correct! Refresh the page for a new question!";
+        result.style.display = "block";
+      }
+
+      // draw the current frame based on sliderValue
+      function draw(sliderValue) {
+
+        // redraw path
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 5;
+
+        ctx.strokeStyle = 'black';
+        drawTarget();
+        drawGraph();
+        var xy;
+        var percent = sliderValue / 100;
+        xy = getLineXYatPercent({
+          x: 600,
+          y: 0
+        }, {
+          x: (centerx + 10) * 30,
+          y: -30 * centery + 300
+        }, percent);
+        drawRect(xy, "red");
+      }
+
+      // draw tracking rect at xy
+      function drawRect(point, color) {
+        ctx.drawImage(arrow, point.x - 100, point.y - 100, 100, 100);
+      }
+
+      //draw tracking dot at xy
+      function drawDot(point, color) {
+        ctx.fillStyle = color;
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 8, 0, Math.PI * 2, false);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // quadratic bezier: percent is 0-1
+      // line: percent is 0-1
+      function getLineXYatPercent(startPt, endPt, percent) {
+        var dx = endPt.x - startPt.x;
+        var dy = endPt.y - startPt.y;
+        var X = startPt.x + dx * percent;
+        var Y = startPt.y + dy * percent;
+        return ({
+          x: X,
+          y: Y
+        });
+      }
+    }
+  </script>
+  <br>
+  <br>
+
+</body>
+
+</html>
