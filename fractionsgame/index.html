@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html>
 
 <head>
@@ -8,21 +9,17 @@
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <spam class="navbar-brand" href="#"> [Name] </spam>
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="index.html#about">About</a>
-      </li>
-    </ul>
+    <spam class="navbar-brand" href="#">Math4Fun</spam>
+    <ul class="navbar-nav ml-auto"></ul>
     <div class="btn-group">
       <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Games
+        All Games
       </button>
       <div class="dropdown-menu">
-        <a class="dropdown-item" href="index.html#games">All Games</a>
+        <a class="dropdown-item" href="../index.html">All Games</a>
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="#">Game 1</a>
-        <a class="dropdown-item" href="#">Game 2</a>
+        <a class="dropdown-item" href="../fractionsgame/">Fraction Game</a>
+        <a class="dropdown-item" href="../archerygame/">Archery game</a>
         <a class="dropdown-item" href="#">Game 3</a>
         <a class="dropdown-item" href="#">Game 4</a>
         <a class="dropdown-item" href="#">Game 5</a>
@@ -69,196 +66,199 @@
     <img id="cake2" src="assets/cake2.jpg" style=" display: none;">
     <img id="cake3" src="assets/cake3.jpg" style=" display: none;">
     <img id="crumbs1" src="assets/crumbs.png" style="display: none;">
+  </div>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script>
-      var occurring = false;
-      var numerator;
-      var denominator = 1;
-      window.onload = execute;
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-      function execute() {
-        var cakenum = Math.floor(Math.random() * 3) + 1;
-        var cake = document.getElementById("cake" + cakenum);
-        var crumbs = document.getElementById("crumbs1");
+  <script>
+    var occurring = false;
+    var numerator;
+    var denominator = 1;
+    window.onload = execute;
 
-        var canvas = document.getElementById("myCanvas");
-        var ctx = canvas.getContext("2d");
+    function execute() {
+      var cakenum = Math.floor(Math.random() * 3) + 1;
+      var cake = document.getElementById("cake" + cakenum);
+      var crumbs = document.getElementById("crumbs1");
 
-        //scale factor
-        while ([1, 5, 7, 10, 11].includes(denominator)) {
-          denominator = Math.floor(Math.random() * 12 + 1);
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+
+      //scale factor
+      while ([1, 5, 7, 10, 11].includes(denominator)) {
+        denominator = Math.floor(Math.random() * 12 + 1);
+      }
+      numerator = Math.floor(Math.random() * (denominator - 1)) + 1;
+
+      document.querySelectorAll(".numerator").forEach(e => e.innerHTML = numerator);
+      document.querySelectorAll(".denominator").forEach(e => e.innerHTML = denominator);
+
+      ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+      displayCake(ctx, cake, crumbs, numerator, denominator);
+    }
+
+    function displayCake(ctx, cake, crumbs, numerator, denominator) {
+      var rows = Math.floor(Math.sqrt(denominator));
+      var columns = denominator / rows;
+      var scale = Math.min(myCanvas.width / cake.width, myCanvas.height / cake.height);
+      var pieceWidth = cake.width * scale / columns;
+      var pieceHeight = cake.height * scale / rows;
+      cutImageUp(ctx, cake, columns, rows, pieceWidth, pieceHeight);
+      addCrumbs(ctx, crumbs, columns, rows, pieceWidth, pieceHeight, numerator);
+      drawLines(ctx, columns, rows, pieceWidth, pieceHeight);
+    }
+
+
+    function cutImageUp(ctx, cake, columns, rows, pieceWidth, pieceHeight) {
+      for (var x = 0; x < rows; x++) {
+        for (var y = 0; y < columns; y++) {
+          //cake piece
+          ctx.drawImage(cake, y * cake.width / columns, x * cake.height / rows, cake.width / columns, cake.height / rows, y * (pieceWidth), x * (pieceHeight), pieceWidth, pieceHeight);
         }
-        numerator = Math.floor(Math.random() * (denominator - 1)) + 1;
-
-        document.querySelectorAll(".numerator").forEach(e => e.innerHTML = numerator);
-        document.querySelectorAll(".denominator").forEach(e => e.innerHTML = denominator);
-
-        ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
-        displayCake(ctx, cake, crumbs, numerator, denominator);
       }
+    }
 
-      function displayCake(ctx, cake, crumbs, numerator, denominator) {
-        var rows = Math.floor(Math.sqrt(denominator));
-        var columns = denominator / rows;
-        var scale = Math.min(myCanvas.width / cake.width, myCanvas.height / cake.height);
-        var pieceWidth = cake.width * scale / columns;
-        var pieceHeight = cake.height * scale / rows;
-        cutImageUp(ctx, cake, columns, rows, pieceWidth, pieceHeight);
-        addCrumbs(ctx, crumbs, columns, rows, pieceWidth, pieceHeight, numerator);
-        drawLines(ctx, columns, rows, pieceWidth, pieceHeight);
+    function drawLines(ctx, columns, rows, pieceWidth, pieceHeight) {
+      //vert lines
+      for (var x = 1; x < columns; x++) {
+        ctx.beginPath();
+        ctx.moveTo(x * (pieceWidth), 0 * (pieceHeight));
+        ctx.lineTo(x * (pieceWidth), 3 * pieceHeight);
+        ctx.stroke();
       }
+      //horz lines
+      for (var x = 1; x < rows; x++) {
+        ctx.beginPath();
+        ctx.moveTo(0, x * pieceHeight);
+        ctx.lineTo(columns * pieceWidth, x * pieceHeight);
+        ctx.stroke();
+      }
+    }
 
-
-      function cutImageUp(ctx, cake, columns, rows, pieceWidth, pieceHeight) {
+    function addCrumbs(ctx, crumbs, columns, rows, pieceWidth, pieceHeight, numerator) {
+      var count = 0;
+      while (count <= numerator) {
         for (var x = 0; x < rows; x++) {
           for (var y = 0; y < columns; y++) {
-            //cake piece
-            ctx.drawImage(cake, y * cake.width / columns, x * cake.height / rows, cake.width / columns, cake.height / rows, y * (pieceWidth), x * (pieceHeight), pieceWidth, pieceHeight);
-          }
-        }
-      }
-
-      function drawLines(ctx, columns, rows, pieceWidth, pieceHeight) {
-        //vert lines
-        for (var x = 1; x < columns; x++) {
-          ctx.beginPath();
-          ctx.moveTo(x * (pieceWidth), 0 * (pieceHeight));
-          ctx.lineTo(x * (pieceWidth), 3 * pieceHeight);
-          ctx.stroke();
-        }
-        //horz lines
-        for (var x = 1; x < rows; x++) {
-          ctx.beginPath();
-          ctx.moveTo(0, x * pieceHeight);
-          ctx.lineTo(columns * pieceWidth, x * pieceHeight);
-          ctx.stroke();
-        }
-      }
-
-      function addCrumbs(ctx, crumbs, columns, rows, pieceWidth, pieceHeight, numerator) {
-        var count = 0;
-        while (count <= numerator) {
-          for (var x = 0; x < rows; x++) {
-            for (var y = 0; y < columns; y++) {
-              ctx.drawImage(crumbs, y * (pieceWidth), x * (pieceHeight), pieceWidth, pieceHeight);
-              count++;
-              if (count == numerator) {
-                return;
-              }
+            ctx.drawImage(crumbs, y * (pieceWidth), x * (pieceHeight), pieceWidth, pieceHeight);
+            count++;
+            if (count == numerator) {
+              return;
             }
           }
         }
       }
+    }
 
-      function checkAns() {
-        var text = document.getElementById("ans").value;
-        var result = document.getElementById("result");
-        try {
-          if (!text.includes("/")) {
-            result.innerHTML = "No fraction sign detected";
-            result.style.display = "block";
-            return;
-          }
-        } catch (e) {
-          alert("ERROR = " + e)
-          return
-        }
-        var index = 0;
-        var testnumerator = "";
-        var condition = false;
-        try {
-          for (var i = 0; i < text.length; i++) {
-            if (text.charAt(i) == '/') {
-              index = i;
-              break;
-            }
-            testnumerator += text.charAt(i);
-          }
-        } catch (e) {
-          alert("ERROR = " + e)
-          return
-        }
-        var testdenominator = "";
-        try {
-          for (var i = index + 1; i < text.length; i++) {
-            testdenominator += text.charAt(i);
-          }
-        } catch (e) {
-          alert("ERROR = " + e)
-          return
-        }
-        var check1 = parseInt(testnumerator)
-        var check2 = parseInt(testdenominator)
-        if (parseFloat(check1) / parseFloat(check2) == parseFloat(numerator) / parseFloat(denominator)) {
-          result.innerHTML = "Correct!";
+    function checkAns() {
+      var text = document.getElementById("ans").value;
+      var result = document.getElementById("result");
+      try {
+        if (!text.includes("/")) {
+          result.innerHTML = "No fraction sign detected";
           result.style.display = "block";
-          hideAllHintButtons();
-          document.getElementById("hint4btn").style.display = "inline-block";
-          return
+          return;
         }
-        try {
-          if (check1 != numerator && check2 != denominator) {
-            result.innerHTML = "Your numerator and denominator are incorrect!";
-            result.style.display = "block";
-            return;
-          } else if (check1 != numerator) {
-            result.innerHTML = "So close! Your denominator is correct, but numerator is incorrect.";
-            result.style.display = "block";
-            return;
-          } else if (check2 != denominator) {
-            result.innerHTML = "So close! Your numerator is correct, but denominator is incorrect.!";
-            result.style.display = "block";
-            return;
+      } catch (e) {
+        alert("ERROR = " + e)
+        return
+      }
+      var index = 0;
+      var testnumerator = "";
+      var condition = false;
+      try {
+        for (var i = 0; i < text.length; i++) {
+          if (text.charAt(i) == '/') {
+            index = i;
+            break;
           }
-        } catch (e) {
-          alert("ERROR = " + e)
+          testnumerator += text.charAt(i);
         }
+      } catch (e) {
+        alert("ERROR = " + e)
+        return
       }
-
-      function newQuestion() {
+      var testdenominator = "";
+      try {
+        for (var i = index + 1; i < text.length; i++) {
+          testdenominator += text.charAt(i);
+        }
+      } catch (e) {
+        alert("ERROR = " + e)
+        return
+      }
+      var check1 = parseInt(testnumerator)
+      var check2 = parseInt(testdenominator)
+      if (parseFloat(check1) / parseFloat(check2) == parseFloat(numerator) / parseFloat(denominator)) {
+        result.innerHTML = "Correct!";
+        result.style.display = "block";
         hideAllHintButtons();
-        document.getElementById("result").style.display = "none";
-        document.getElementById(`hint1btn`).style.display = "inline-block";
-        document.getElementById("ans").value = "";
-        if (!occurring) {
-          var opacity = 1;
-          var interval = setInterval(function() {
-            occurring = true;
-            opacity -= 0.01;
-            document.getElementById("myCanvas").style.opacity = opacity;
-
-            if (opacity <= 0) {
-              occurring = false;
-              execute();
-              document.getElementById("myCanvas").style.opacity = 1;
-              clearInterval(interval);
-            }
-          }, 1);
-        }
+        document.getElementById("hint4btn").style.display = "inline-block";
+        return
       }
+      try {
+        if (check1 != numerator && check2 != denominator) {
+          result.innerHTML = "Your numerator and denominator are incorrect!";
+          result.style.display = "block";
+          return;
+        } else if (check1 != numerator) {
+          result.innerHTML = "So close! Your denominator is correct, but numerator is incorrect.";
+          result.style.display = "block";
+          return;
+        } else if (check2 != denominator) {
+          result.innerHTML = "So close! Your numerator is correct, but denominator is incorrect.!";
+          result.style.display = "block";
+          return;
+        }
+      } catch (e) {
+        alert("ERROR = " + e)
+      }
+    }
 
+    function newQuestion() {
+      hideAllHintButtons();
+      document.getElementById("result").style.display = "none";
+      document.getElementById(`hint1btn`).style.display = "inline-block";
+      document.getElementById("ans").value = "";
+      if (!occurring) {
+        var opacity = 1;
+        var interval = setInterval(function() {
+          occurring = true;
+          opacity -= 0.01;
+          document.getElementById("myCanvas").style.opacity = opacity;
+
+          if (opacity <= 0) {
+            occurring = false;
+            execute();
+            document.getElementById("myCanvas").style.opacity = 1;
+            clearInterval(interval);
+          }
+        }, 1);
+      }
+    }
+
+    for (var i = 1; i <= 3; i++) {
+      addHintButtons(i)
+    }
+
+    function addHintButtons(i) {
+      document.getElementById(`hint${i}btn`).addEventListener("click", function() {
+        document.getElementById(`hint${i}`).style.display = "block";
+        document.getElementById(`hint${i}btn`).style.display = "none";
+        document.getElementById(`hint${i + 1}btn`).style.display = "inline-block";
+      });
+    }
+
+    function hideAllHintButtons() {
       for (var i = 1; i <= 3; i++) {
-        addHintButtons(i)
+        document.getElementById(`hint${i}`).style.display = "none";
+        document.getElementById(`hint${i}btn`).style.display = "none";
+        document.getElementById(`hint${i + 1}btn`).style.display = "none";
       }
-
-      function addHintButtons(i) {
-        document.getElementById(`hint${i}btn`).addEventListener("click", function() {
-          document.getElementById(`hint${i}`).style.display = "block";
-          document.getElementById(`hint${i}btn`).style.display = "none";
-          document.getElementById(`hint${i + 1}btn`).style.display = "inline-block";
-        });
-      }
-
-      function hideAllHintButtons() {
-        for (var i = 1; i <= 3; i++) {
-          document.getElementById(`hint${i}`).style.display = "none";
-          document.getElementById(`hint${i}btn`).style.display = "none";
-          document.getElementById(`hint${i + 1}btn`).style.display = "none";
-        }
-      }
-    </script>
-  </div>
+    }
+  </script>
 
 </body>
 
