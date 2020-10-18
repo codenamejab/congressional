@@ -1,528 +1,408 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+  <link rel="stylesheet" href="../index.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
 <body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="../">Math4Fun</a>
+    <ul class="navbar-nav ml-auto"></ul>
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        All Games
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="../">All Games</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="../fractionsgame/">Fraction Game</a>
+        <a class="dropdown-item" href="../archerygame/">Archery Game</a>
+        <a class="dropdown-item" href="../basketball/">Basketball Game</a>
+        <a class="dropdown-item" href="../poolgame">Pool Game</a>
+      </div>
+    </div>
+  </nav>
 
+  <div class="container-fluid text-center">
+    <div class="row">
+      <div class="col">
+        <h1 class="title text-center">Basketball Game</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <canvas class="canvas" id="myCanvas" width="900" height="600"></canvas>
+      </div>
+      <div class="col">
+        <div class="instructions">
+          <h1>Shoot the basketball into the hoop!</h1>
+          <h2>Using the input box below, input a quadratic equation, writing your answer in y=-(ax-h)^2+k form</h2>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+          <br>
 
-<input type=text id="T1"> </input>
-<button type=button id="btn"> Shoot! </button>
+          <input type="text" id="ans"> </input>
+          <button class="btn" id="checkAns" onclick="checkAns()" style="background-color: yellow;"> Shoot! </button>
 
-</br>
-</br>
+          <h3 id="result" style="padding-top: 20px; display: none;">Correct!</h3>
+        </div>
+      </div>
+    </div>
+    <img src="assets/basketball.png" id="basketballImg" style="display: none;">
+    <img src="assets/free throw.png" id="freeThrowImg" style="display: none;">
+    <img src="assets/hoop.png" id="hoopImg" style="display: none;">
+  </div>
 
-<h3 id="TB" style="color:black;"> Write equation in  vertex form y = - (ax-h)^2+k to sink the free throw</h3 >
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script>
+    var ball;
+    var hoop;
+    var line;
+    var ctx;
 
-<canvas id="myCanvas" width="900" height="600" style="border:1px solid #d3d3d3;">
-</canvas>
+    window.onload = execute;
 
-<script>
+    function execute() {
+      var canvas = document.getElementById("myCanvas");
+      ctx = canvas.getContext("2d");
 
-  //hoping this will make them load asap
-hoop = new Image();
-  hoop.src = 'assets/hoop.png';
- 
-   ball = new Image();
-  ball.src = 'assets/basketball.png';
-  line = new Image();
-  line.src = 'assets/free throw.png'
+      hoop = document.getElementById("hoopImg")
+      ball = document.getElementById("basketballImg")
 
-</script>
+      can_width = canvas.width;
+      can_height = canvas.height;
+      can_width_gridScale = can_width / 30;
+      can_height_gridScale = can_height / 20;
 
-<script>
-  /*https://stackoverflow.com/questions/41690803/how-to-make-a-input-field-value-in-h1 */
+      line = document.getElementById("freeThrowImg");
+      add_line();
 
-$("#btn").on("click", function() {
-  var text = document.getElementById("T1").value;
+      drawGrid();
+      drawNotches();
 
-  //input is form 'y = sign(ax+b)^2+c'
-  input = text;
-
-
-  if((input.substring((input.indexOf('y')), (input.indexOf('(')) )).includes('-')){
-    inputSign = -1
-  }
-  else{
-    inputSign = 1
-  }
-  inputA = parseFloat(input.substring((input.indexOf('(')+1),(input.indexOf('x'))))
-  if(    (input.indexOf('(')+1) == (input.indexOf('x'))    ){
-    inputA = 1
-  }
-
-  inputB = parseFloat(input.substring((input.indexOf('x')+1),(input.indexOf(')'))))
-  if(    (input.indexOf('x')+1) == (input.indexOf(')'))    ){
-    inputB = 0
-  }
-
-
-  inputC = parseFloat(input.substring((input.indexOf('^')+2),(input.length)))
-
-  if(    (input.indexOf('^')+2) == (input.length)    ){
-    inputC = 0
-  }
-
-
-  try {
-    if(!input.includes('^2')){
-    throw "no ^2 detected!"
-    }
-  }
-  catch(err){
-
-  //$("h3").css("color", "red");
-    //$("h3").replaceWith("error: " + err);
-    alert("ERROR = " + err)
-    
- }
-
-
-  var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
-
-// set starting values
-var fps =60;
-var percent = 0
-var direction = 1;
-
-
-ball = new Image();
-ball.src = 'assets/basketball.png';
-
-
-var swish = 0;
-
-// start the animation
-animate();
-
-function animate() {
-
-    // set the animation position (0-100)
-    percent += direction;
-    if (percent < 0) {
-        percent = 0;
-        direction = 1;
-    };
-
-    draw(percent);
-
-    if (percent < 100){
-    // request another frame
-    setTimeout(function () {
-        requestAnimationFrame(animate);
-    }, 1000 / fps);
-    
-    }
-}
-
-
-// draw the current frame based on sliderValue
-function draw(sliderValue) {
-
-    // redraw path
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.lineWidth = 5;
-
-
-   
-    ctx.strokeStyle = 'black';
-    drawGrid();
-    drawNotches();
-    add_hoop();
-    add_line();
-    
-
-    //show start point
-
-
-    ctx.strokeStyle = 'rgb(0,255,0)'
-    ctx.fillStyle = 'blue'   
-    ctx.beginPath();
-    ctx.arc(660,480,5,0,6.28);
-    ctx.fill();
-    ctx.strokeStyle= "black"; 
-    ctx.lineWidth = 2;
-    ctx.font = "bold 30px Arial"
-    ctx.fillText("Start your shot here", 540,445)
-    ctx.strokeText("Start your shot here", 540,445)
-
-    if(swish == 1){
-        ctx.fillStyle = 'rgb(0,255,255)'
-        ctx.font = "bold 120px Times New Roman"
-        ctx.fillText("Swish!", 300,250)
-    }
-    else if(swish == 2){
-        ctx.fillStyle = 'rgb(255,0,0)'
-        ctx.font = "bold 40px Times New Roman"
-        ctx.fillText("You stepped past the line!", 230, 350)
-    }
-    else if(swish == 3){
-        ctx.fillStyle = 'rgb(0,255,255)'
-        ctx.font = "bold 120px Times New Roman"
-        ctx.fillText("Swiiiish!", 230,250)      
-    }
-    else if(swish == 4){
-        ctx.fillStyle = 'rgb(255,0,0)'
-        ctx.font = "bold 40px Times New Roman"
-        ctx.fillText("You missed!", 350, 350)
+      add_hoop();
+      add_ball();
     }
 
+    function checkAns() {
+      var text = document.getElementById("ans").value;
+      //input is form 'y = sign(ax+b)^2+c'
+      input = text;
 
-    graphCurve(inputSign,inputA,inputB,inputC);
-    
-    if(percent == 100 || percent == 0){
-      swish = 0
-    }
+      if ((input.substring((input.indexOf('y')), (input.indexOf('(')))).includes('-')) {
+        inputSign = -1
+      } else {
+        inputSign = 1
+      }
+      inputA = parseFloat(input.substring((input.indexOf('(') + 1), (input.indexOf('x'))))
+      if ((input.indexOf('(') + 1) == (input.indexOf('x'))) {
+        inputA = 1
+      }
 
+      inputB = parseFloat(input.substring((input.indexOf('x') + 1), (input.indexOf(')'))))
+      if ((input.indexOf('x') + 1) == (input.indexOf(')'))) {
+        inputB = 0
+      }
 
-    // draw the tracking rectangle
-    var xy;
+      inputC = parseFloat(input.substring((input.indexOf('^') + 2), (input.length)))
+
+      if ((input.indexOf('^') + 2) == (input.length)) {
+        inputC = 0
+      }
+
+      var result = document.getElementById("result")
+
+      try {
+        if (!input.includes('^2')) {
+          result.innerHTML = "No ^2 detected!";
+          result.style.display = "block";
+        }
+      } catch (err) {
+        alert("ERROR = " + err)
+      }
+
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+
+      // set starting values
+      var fps = 60;
+      var percent = 0
+      var direction = 1;
+
+      ball = document.getElementById("basketballImg");
+
+      var swish = 0;
+      // start the animation
+      animate();
+
+      function animate() {
+
+        // set the animation position (0-100)
+        percent += direction;
+        if (percent < 0) {
+          percent = 0;
+          direction = 1;
+        };
+
+        draw(percent);
+
+        if (percent < 100) {
+          // request another frame
+          setTimeout(function() {
+            requestAnimationFrame(animate);
+          }, 1000 / fps);
+
+        }
+      }
+
+      // draw the current frame based on sliderValue
+      function draw(sliderValue) {
+        // redraw path
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = 'black';
+        drawGrid();
+        drawNotches();
+        add_hoop();
+        add_line();
+
+        //show start point
+        ctx.strokeStyle = 'rgb(0,255,0)'
+        ctx.fillStyle = 'blue'
+        ctx.beginPath();
+        ctx.arc(660, 480, 5, 0, 6.28);
+        ctx.fill();
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 2;
+        ctx.font = "bold 30px Arial"
+        ctx.fillText("Start your shot here", 540, 445)
+        ctx.strokeText("Start your shot here", 540, 445)
+
+        var result = document.getElementById("result")
+
+        if (swish == 1) {
+          result.innerHTML = "Swish!";
+          result.style.display = "block";
+        } else if (swish == 2) {
+          result.innerHTML = "You stepped past the line!";
+          result.style.display = "block";
+        } else if (swish == 3) {
+          result.innerHTML = "Swiiiish!";
+          result.style.display = "block";
+        } else if (swish == 4) {
+          result.innerHTML = "You missed!";
+          result.style.display = "block";
+        }
+
+        graphCurve(inputSign, inputA, inputB, inputC);
+
+        if (percent == 100 || percent == 0) {
+          swish = 0
+        }
+
+        // draw the tracking rectangle
+        var xy;
 
         // this has to be 25
         var percent = (sliderValue) / 25
         xy = getQuadraticBezierXYatPercent({
-            x: point1X,
-            y: point1Y
+          x: point1X,
+          y: point1Y
         }, {
-            x: parabOriginX,
-            y: IntersectY
+          x: parabOriginX,
+          y: IntersectY
         }, {
-            x: point2X,
-            y: point2Y
-        }, percent/4);
-    //this is to see where ball lands and not have it go on past hoop
+          x: point2X,
+          y: point2Y
+        }, percent / 4);
 
+        drawRect(xy, "red");
 
-    //if((xy.x<= 165 - ball.width * .6 / 2 ) && (xy.x >= 60 - ball.width * .6 / 2) && (xy.y >=60 - ball.height * .6 / 2) && (xy.y <= 150 - ball.height * .6 / 2)){
-      //drawRect(xy, "red")
-     // alert("yu in")
-      
+        if (point1X >= 600 && point1X <= 720 && xy.x <= 197 && xy.x >= 187 && xy.y >= 30 && xy.y <= 150) {
+          console.log("Swish")
+          swish = 1;
+        } else if (point1X <= 600 || point1X >= 720) {
+          swish = 2;
+          console.log("travelled while shooting")
+        } else if (slope >= 15 && xy.x <= 180 && xy.x >= 60) {
+          swish = 3;
+          console.log("Swiiiiish")
 
-    
-    
-    drawRect(xy, "red");
-  
-
-
-       //check if they made it or not; swish
-      
-       if(point1X >= 600 && point1X <= 720 && xy.x <= 197 && xy.x >= 187 && xy.y >= 30 && xy.y <= 150 ){
-        console.log("Swish")
-        swish = 1;
-     }
-      else if(point1X <= 600 || point1X >= 720){
-        swish = 2;
-        console.log("travelled while shooting")
-      }
-      else if(slope >= 15 && xy.x <= 180 && xy.x >= 60){
-        swish = 3;
-        console.log("Swiiiiish")
-
-      }
-      else if(slope <15 && xy.x <= 197 && xy.x >= 187 && (xy.y <= 30 || xy.y >= 150)){
-        swish = 4
-        console.log("BRICK")
-
+        } else if (slope < 15 && xy.x <= 197 && xy.x >= 187 && (xy.y <= 30 || xy.y >= 150)) {
+          swish = 4
+          console.log("BRICK")
+        }
       }
 
+      // draw tracking rect at xy
+      function drawRect(point, color) {
+        ctx.fillStyle = "cyan";
+        ctx.strokeStyle = "gray";
+        ctx.lineWidth = 3;
 
-}
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 55, 0, 6.28, false); //draw the circle
+        ctx.clip(); //call the clip method so the next render is clipped in last path
+        ctx.closePath();
 
+        ctx.drawImage(ball, point.x - ball.width * .6 / 2, point.y - ball.height * .6 / 2, ball.width * 0.6, ball.height * 0.6);
 
-// draw tracking rect at xy
-function drawRect(point, color) {
-    ctx.fillStyle = "cyan";
-    ctx.strokeStyle = "gray";
-    ctx.lineWidth = 3;
+        ctx.restore();
+      }
 
+      function getQuadraticBezierXYatPercent(startPt, controlPt, endPt, percent) {
+        var x = Math.pow(1 - percent, 2) * startPt.x + 2 * (1 - percent) * percent * controlPt.x + Math.pow(percent, 2) * endPt.x;
+        var y = Math.pow(1 - percent, 2) * startPt.y + 2 * (1 - percent) * percent * controlPt.y + Math.pow(percent, 2) * endPt.y;
+        return ({
+          x: x,
+          y: y
+        });
+      }
+    }
 
+    function add_line() {
+      ctx.drawImage(line, -50, 400, line.width * .8, line.height * .5);
+    }
 
+    function drawNotches(i) {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = 'black';
+      //multiply by 5 to get a notch every 5 units
+      for (j = 0; j <= can_height; j += can_height_gridScale * 5) {
+        ctx.beginPath();
+        ctx.moveTo(can_width / 2 - 5, j);
+        ctx.lineTo(can_width / 2 + 5, j);
+        ctx.stroke();
+        ctx.closePath();
+      }
+      for (j = 0; j <= can_width; j += can_width_gridScale * 5) {
+        ctx.beginPath();
+        ctx.moveTo(j, can_height / 2 - 5);
+        ctx.lineTo(j, can_height / 2 + 5);
+        ctx.stroke();
+        ctx.closePath();
+      }
 
+    }
 
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(point.x, point.y, 55, 0, 6.28, false); //draw the circle
-    ctx.clip(); //call the clip method so the next render is clipped in last path
-    ctx.closePath();
-
-
-
-    
-    ctx.drawImage(ball, point.x - ball.width * .6 / 2, point.y - ball.height * .6 / 2, ball.width * 0.6, ball.height * 0.6);
-    
-    ctx.restore();
-
-
-    //ctx.rect(point.x - 13, point.y - 8, 25, 15);
-   
-}
-
-
-     
-
-
-
-
-// quadratic bezier: percent is 0-1
-function getQuadraticBezierXYatPercent(startPt, controlPt, endPt, percent) {
-    var x = Math.pow(1 - percent, 2) * startPt.x + 2 * (1 - percent) * percent * controlPt.x + Math.pow(percent, 2) * endPt.x;
-    var y = Math.pow(1 - percent, 2) * startPt.y + 2 * (1 - percent) * percent * controlPt.y + Math.pow(percent, 2) * endPt.y;
-    return ({
-        x: x,
-        y: y
-    });
-}
-
-
-
-
-})
-
-</script>
-
-
- <script>
-var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
-
-can_width = canvas.width;
-can_height = canvas.height;
-//these two below must be the same for an even grid, let's add an error if not
-//https://www.w3schools.com/jsref/jsref_throw.asp
-can_width_gridScale = can_width/30;
-can_height_gridScale = can_height/20;
-
-//put this above so grid is seeable above line while calculating shot
-line = new Image();
-  line.src = 'assets/free throw.png'
-add_line();
-function add_line(){
-  ctx.drawImage(line, -50, 400, line.width*.8, line.height * .5);
-}
-
-
-drawGrid();
-drawNotches();
-drawStart();
-
-  function drawStart(){
-    ctx.strokeStyle = 'rgb(0,0,255)'
-    ctx.beginPath();
-    ctx.arc(660,480,5,0,6.28);
-    ctx.fillStyle='blue'
-    ctx.fill();
-    
-    
-  }
-
-
-  function drawNotches(i){
-    ctx.lineWidth=3;
-    ctx.strokeStyle= 'black';
-    //multiply by 5 to get a notch every 5 units
-    for(j=0;j<=can_height;j+= can_height_gridScale*5){
+    function drawVert(i) {
       ctx.beginPath();
-      ctx.moveTo(can_width/2-5,j);
-      ctx.lineTo(can_width/2+5,j);
-      ctx.stroke();
-      ctx.closePath();
-  }
-    for(j=0;j<=can_width;j+= can_width_gridScale*5){
-      ctx.beginPath();
-      ctx.moveTo(j,can_height/2-5);
-      ctx.lineTo(j,can_height/2+5);
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, can_height);
       ctx.stroke();
       ctx.closePath();
     }
 
-  }
-  function drawVert(i){
-    ctx.beginPath();
-    ctx.moveTo(i,0);
-    ctx.lineTo(i,can_height);
-    ctx.stroke();
-    ctx.closePath();
-  }
-    
-  function drawHorz(i){
-    ctx.beginPath();
-    ctx.moveTo(0,i);
-    ctx.lineTo(can_width,i);
-    ctx.stroke();
-    ctx.closePath();
-  }
-
-
-  function drawGrid(){
-    var i=0;
-    axis_pos = 1;
-
-
-    for(var i=0;i<=can_width;i+=can_width_gridScale){
-      if(i==(can_width)/2){
-        ctx.lineWidth=3;
-        ctx.strokeStyle = 'red';
-      }else{
-        ctx.lineWidth=1;
-        ctx.strokeStyle= 'black';
-      }
-      drawVert(i);     
+    function drawHorz(i) {
+      ctx.beginPath();
+      ctx.moveTo(0, i);
+      ctx.lineTo(can_width, i);
+      ctx.stroke();
+      ctx.closePath();
     }
-  for(var i=0;i<=can_height;i+=can_height_gridScale){
-      if(i==(can_height)/2){
-        ctx.lineWidth=3;
-        ctx.strokeStyle = 'red';
+
+    function drawGrid() {
+      var i = 0;
+      axis_pos = 1;
+
+      for (var i = 0; i <= can_width; i += can_width_gridScale) {
+        if (i == (can_width) / 2) {
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = 'red';
+        } else {
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = 'black';
+        }
+        drawVert(i);
+      }
+      for (var i = 0; i <= can_height; i += can_height_gridScale) {
+        if (i == (can_height) / 2) {
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = 'red';
+          drawHorz(i);
+        } else {
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = 'black';
+        }
         drawHorz(i);
-      }else{
-        ctx.lineWidth=1;
-        ctx.strokeStyle= 'black';
       }
-      drawHorz(i);
-  }
-}
+    }
 
-  </script> 
+    function add_hoop() {
+      ctx.drawImage(hoop, 0, 0);
 
+      //show goal range
+      ctx.strokeStyle = 'rgb(0,255,0)'
+      ctx.beginPath();
+      ctx.moveTo(192, 30);
+      ctx.lineTo(192, 150);
+      ctx.stroke();
+      ctx.fillStyle = 'rgb(0,255,0)'
+      ctx.font = "bold 30px Arial"
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 1;
+      ctx.fillText("Aim for this range to sink the shot", 200, 90)
+      ctx.strokeText("Aim for this range to sink the shot", 200, 90)
+    }
+    //can we take out
+    function add_ball() {
+      canvas = document.getElementById('myCanvas');
+      ctx = canvas.getContext('2d');
 
-<script>
-var c = document.getElementById("myCanvas");
-var ctx = c.getContext("2d");
+      //after cropping the image to circle shape, the webpage adds a rectangle outline so we have to manually cut out
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(685, 505, 55, 0, 6.28, false); //draw the circle
+      ctx.clip(); //call the clip method so the next render is clipped in last path
+      ctx.closePath();
+      ctx.drawImage(ball, 610, 445, ball.width * 0.6, ball.height * 0.6);
+      ctx.restore();
 
+      //show start point
+      ctx.strokeStyle = 'rgb(0,255,0)'
+      ctx.fillStyle = 'blue'
+      ctx.beginPath();
+      ctx.arc(660, 480, 5, 0, 6.28);
+      ctx.fill();
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 1;
+      ctx.font = "bold 30px Arial"
+      ctx.fillText("Start your shot here", 540, 445)
+      ctx.strokeText("Start your shot here", 540, 445)
+    }
 
-hoop = new Image();
-  hoop.src = 'assets/hoop.png';
- 
-   ball = new Image();
-  ball.src = 'assets/basketball.png';
+    function graphCurve(sign, a, b, c) {
+      point1Y = 480
+        //y coordinate is basis of this
+      point1X = 450 + (30 * (((Math.sqrt(Math.abs((((300 - point1Y) / 30) - c) * sign))) - b) / a))
 
+      parabOriginX = 450 - 30 * (b / a)
+      parabOriginY = 300 - 30 * c
+      point2X = parabOriginX - (point1X - parabOriginX)
+      point2Y = point1Y
+      slopePoint1 = sign * a * a * 2 * ((point1X - 450) / 30) + sign * a * b * 2
+      slopePoint2 = sign * a * a * 2 * (((point2X) / 30) - 15) + sign * a * b * 2
+      slope = Math.abs(slopePoint1)
+      IntersectY = (parabOriginY - 240) * 2
 
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(200, 0, 490, 600); //draw the rect clip
+      ctx.closePath();
 
-
-
-add_hoop();
-add_ball();
-
-
-
-
-
-
-function add_hoop()
-{
-  
-  ctx.drawImage(hoop, 0, 0);
-  
-  //show goal range
-  ctx.strokeStyle = 'rgb(0,255,0)'
-  ctx.beginPath();
-  ctx.moveTo(192, 30);
-  ctx.lineTo(192, 150);
-  ctx.stroke();
-  ctx.fillStyle = 'rgb(0,255,0)'
-  ctx.font = "bold 30px Arial"
-  ctx.strokeStyle= "black"; 
-  ctx.lineWidth = 1;
-  ctx.fillText("Aim for this range to sink the shot", 200,90)
-  ctx.strokeText("Aim for this range to sink the shot", 200,90)
-}
-//can we take out
-function add_ball()
-{
- 
-  
-
-
-    canvas = document.getElementById('myCanvas');
-    ctx = canvas.getContext('2d');
-
-    //after cropping the image to circle shape, the webpage adds a rectangle outline so we have to manually cut out
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(685, 505, 55, 0, 6.28, false); //draw the circle
-    ctx.clip(); //call the clip method so the next render is clipped in last path
-    ctx.closePath();
-    ctx.drawImage(ball, 610, 445, ball.width * 0.6, ball.height * 0.6);
-    ctx.restore();
-
-    //show start point
-    ctx.strokeStyle = 'rgb(0,255,0)'
-    ctx.fillStyle = 'blue'   
-    ctx.beginPath();
-    ctx.arc(660,480,5,0,6.28);
-    ctx.fill();
-    ctx.strokeStyle= "black"; 
-    ctx.lineWidth = 1;
-    ctx.font = "bold 30px Arial"
-    ctx.fillText("Start your shot here", 540,445)
-    ctx.strokeText("Start your shot here", 540,445)
-}
-
-
-
-
-</script> 
-
-
-
-
-
-
-<script>
-    var canvas = document.getElementById("myCanvas");
-var ctx = canvas.getContext("2d");
-
-//y=sign(ax+b)^2+c
-
-
-//sign isnt rly needed due to var slope
-function graphCurve(sign, a, b, c) {
-  
-
-
-  point1Y=480
-  //y coordinate is basis of this
-  point1X = 450 + (30 * (((Math.sqrt(Math.abs((((300-point1Y)/30)-c) * sign))) - b) / a))
-  //alert(Math.sqrt(Math.abs((((300-point1Y)/30) - c))))
-  
-  
-  //it took soooo long to realize origin depends on a and b, i literally questioned all my code
-  parabOriginX=450-30*(b/a)
-  parabOriginY=300-30*c
-  point2X=parabOriginX - (point1X-parabOriginX)
-  point2Y=point1Y
-  //derivative: 'sign' * a * a * 2x + 'sign' * a * b * 2
-  //these should be equal, they are in terms of grid(NOT CANVAS)
-  slopePoint1 = sign*a*a*2*((point1X-450)/30) + sign*a*b*2
-  slopePoint2 = sign*a*a*2*(((point2X)/30)-15) + sign*a*b*2
-  slope = Math.abs(slopePoint1)
-//IntersectY=((point1X-parabOriginX)/30)*((slopePoint2/2)*(Math.abs(parabOriginY-point1Y)))
-//IntersectY= point1Y - (slope * (point1X-parabOriginX)) 
-//IntersectY = 360 - (2 * (point1Y-parabOriginY))
-//IntersectY = 300 -((slope * Math.abs(point1X-parabOriginX))/2)
-
-
-  //this works wooooooo
-  IntersectY = (parabOriginY - 240) * 2
-
- //alert(parabOriginY)
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(200, 0, 490, 600); //draw the rect clip
-  //ctx.clip(); //call the clip method so the next render is clipped in last path
-  ctx.closePath();
-
-  ctx.beginPath();
-  ctx.moveTo(point1X,point1Y)
-  ctx.quadraticCurveTo(parabOriginX, IntersectY, point2X, point2Y)
-  ctx.stroke();
-  ctx.restore();
-  ctx.closePath();
-}
-</script>
-
-
-
+      ctx.beginPath();
+      ctx.moveTo(point1X, point1Y)
+      ctx.quadraticCurveTo(parabOriginX, IntersectY, point2X, point2Y)
+      ctx.stroke();
+      ctx.restore();
+      ctx.closePath();
+    }
+  </script>
 </body>
+
 </html>
