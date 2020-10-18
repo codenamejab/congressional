@@ -5,27 +5,38 @@
 <head></head>
 
 <body>
-  <canvas id="myCanvas" width=600 height=900></canvas>
+  <canvas id="myCanvas" width=400 height=600></canvas>
 
-  <img id="ball1" src="ball.png" style=" display: none;">
+  <img id="ball1" src="assets/ball.png" style=" display: none;">
+  <img id="table" src="assets/table.png" style=" display: none;">
   <script>
-    var radius = 50;
-    var ball1x = 60;
-    var ball1y = 60;
-    var ball2x = 120;
-    var ball2y = 450;
+    var input = 78;
+
+    var radius = 20;
+    //make this random and not = 180
+    var ball1x = 120;
+    var ball1y = 100;
+    var ball2x = 180;
+    var ball2y = 280;
     var change1X = 1;
     var change1Y = 0;
-    var change2X = 0; 
-    var change2Y = -30;
+
     var speed = 30;
+    var wallSeparation = 10;
     var animation;
+
+
+    var change2Y = Math.round(Math.sin(input * Math.PI / 180) * -1 * speed);
+    var change2X = Math.round(Math.cos(input * Math.PI / 180) * +1 * speed);
+
     window.onload = function() {
       var canvas = document.getElementById("myCanvas");
       var ctx = canvas.getContext("2d");
       var ball = document.getElementById("ball1");
-      ctx.drawImage(ball, ball1x, ball1y);
-      ctx.drawImage(ball, ball2x, ball2y);
+      ctx.drawImage(table, 0, 0, 400, 600);
+      ctx.drawImage(ball, ball1x, ball1y, radius, radius);
+      ctx.drawImage(ball, ball2x, ball2y, 2 * radius, 2 * radius);
+
       drawLine(ctx, ball1x + radius, ball1y + radius, ball2x + radius, ball2y + radius);
       animateBall2(ctx, ball, change2X, change2Y);
 
@@ -35,7 +46,7 @@
     }
 
     function getSlope(x1, y1, x2, y2) {
-      return -1 * (y2 - y1) / (x2 - x1);
+      return -1 * ((y2 - y1) / (x2 - x1));
     }
 
     function drawLine(ctx, x1, y1, x2, y2) {
@@ -45,14 +56,38 @@
       ctx.stroke();
     }
 
+
+    function checkWallCollision() {
+      //yeah this is half hardcoded half soft
+      if (ball1x < wallSeparation || ball1x + 2 * radius > 400 - wallSeparation) {
+        endBall1Animation();
+      }
+      if (ball1y < wallSeparation || ball1y + 2 * radius > 600 - wallSeparation) {
+        endBall1Animation();
+      }
+      if (ball2x < wallSeparation || ball2x + 2 * radius > 400 - wallSeparation) {
+        endBall2Animation();
+      }
+      if (ball2y < wallSeparation || ball2y + 2 * radius > 600 - wallSeparation) {
+        endBall2Animation();
+      }
+
+
+    }
+
+
     function animateBall1(ctx, ball) {
       animationBall1 = setInterval(function() {
+        ctx.drawImage(table, 0, 0, 400, 600);
         ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        ctx.drawImage(table, 0, 0, 400, 600);
         ball1x -= change1X / 5;
         ball1y += change1Y / 5;
-        ctx.drawImage(ball, ball1x, ball1y);
-        ctx.drawImage(ball, ball2x, ball2y);
+        ctx.drawImage(ball, ball1x, ball1y, 2 * radius, 2 * radius);
+        ctx.drawImage(ball, ball2x, ball2y, 2 * radius, 2 * radius);
         drawLine(ctx, ball1x + radius, ball1y + radius, ball2x + radius, ball2y + radius);
+        checkWallCollision();
+
       }, 10);
     }
 
@@ -62,22 +97,28 @@
 
     function animateBall2(ctx, ball) {
       animationBall2 = setInterval(function() {
+        ctx.drawImage(table, 0, 0, 400, 600);
         ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
+        ctx.drawImage(table, 0, 0, 400, 600);
         ball2x -= change2X / 5;
         ball2y += change2Y / 5;
-        ctx.drawImage(ball, ball1x, ball1y);
-        ctx.drawImage(ball, ball2x, ball2y);
+        ctx.drawImage(ball, ball1x, ball1y, 2 * radius, 2 * radius);
+        ctx.drawImage(ball, ball2x, ball2y, 2 * radius, 2 * radius);
         drawLine(ctx, ball1x + radius, ball1y + radius, ball2x + radius, ball2y + radius);
 
-        if (checkCollision()) {
+        if (checkBallCollision()) {
           change1Y = getSlope(ball1x + radius, ball1y + radius, ball2x + radius, ball2y + radius);
           var hypotenuse = change1X * change1X + change1Y * change1Y;
           var changeFactor = speed / hypotenuse;
+          if (ball2x < ball1x) {
+            changeFactor *= -1;
+          }
           change1X *= changeFactor;
           change1Y *= changeFactor;
           animateBall1(ctx, ball);
           endBall2Animation();
         }
+        checkWallCollision();
       }, 10);
     }
 
@@ -85,9 +126,27 @@
       clearInterval(animationBall2);
     }
 
-    function checkCollision() {
-      return Math.sqrt(Math.pow(Math.abs(ball1x - ball2x), 2) + Math.pow(Math.abs(ball1y - ball2y), 2)) <= 100
+    function checkBallCollision() {
+      return Math.sqrt(Math.pow(Math.abs(ball1x - ball2x), 2) + Math.pow(Math.abs(ball1y - ball2y), 2)) <= radius * 2
     }
+    
+       function checkScore(){
+      if(ball1x < 40 || ball1y > 40){
+        return true;
+        console.log("true1")
+      }
+      if(ball1x > 360 || ball1y > 40){
+        return true;
+        console.log("true2")
+      }
+      if(ball1x < 40 || ball1y < 360){
+        return true;
+        console.log("true3")
+      }
+      if(ball1x < 360 || ball1y < 360){
+        return true;
+        console.log("true4")
+      }
   </script>
 </body>
 
