@@ -2,47 +2,127 @@
 
 <html>
 
-<head></head>
+<head>
+  <link rel="stylesheet" href="../index.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
 
 <body>
-  <canvas id="myCanvas" width=400 height=600></canvas>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <a class="navbar-brand" href="../">Math4Fun</a>
+    <ul class="navbar-nav ml-auto"></ul>
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        All Games
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="../">All Games</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="../fractionsgame/">Fraction Game</a>
+        <a class="dropdown-item" href="../archerygame/">Archery Game</a>
+        <a class="dropdown-item" href="../basketball/">Basketball Game</a>
+        <a class="dropdown-item" href="../poolgame">Pool Game</a>
+      </div>
+    </div>
+  </nav>
 
-  <img id="ball1" src="assets/ball.png" style=" display: none;">
-  <img id="table" src="assets/table.png" style=" display: none;">
+  <div class="container-fluid text-center">
+    <div class="row">
+      <div class="col">
+        <h1 class="title text-center">Pool Game</h1>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <canvas class="canvas" id="myCanvas" width="820" height="600"></canvas>
+      </div>
+      <div class="col">
+        <div class="instructions">
+          <h1>Hit the pool ball into the hole!</h1>
+          <h2>Using the input box below, enter the angle you would like to hit the pool ball at. </h2>
+
+          <br>
+
+          <input type="text" id="ans"> </input>
+          <button class="btn" id="checkAns" onclick="hitBall()" style="background-color: yellow;"> Check </button>
+
+          <h3 id="result" style="padding-top: 20px; display: none;">Correct!</h3>
+          <button class="btn" id="reset" onclick="drawOriginal()" style="background-color: yellow; display: none; padding-top: 10px;">Reset</button>
+
+          <div id="hints" style="padding-top: 10px;">
+            <button class="btn" id="hint1btn" style="background-color: yellow; display: none;">Hint 1</button>
+            <h4 id="hint1" style="display: none;">1. You can see that the number of pieces of the cake eaten is <span class="numerator">2</span>, and the total number of pieces of cake is <span class="denominator">4</span></h4>
+            <button class="btn" id="hint2btn" style="background-color: yellow; display: none;">Hint 2</button>
+            <h4 id="hint2" style="display: none;">2. The fraction of the cake that has been eaten is the pieces of cake eaten / total pieces of cake. </h4>
+            <button class="btn" id="hint3btn" style="background-color: yellow; display: none;">I don't know</button>
+            <h4 id="hint3" style="display: none;">3. So, the fraction of the cake that has been eaten is <span class="numerator">2</span>/<span class="denominator">4</span></h4>
+            <button class="btn" id="hint4btn" onclick="newQuestion()" style="background-color: yellow; display: none;">New Question</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <img id="ball1" src="assets/ball.png" style=" display: none;">
+    <img id="table" src="assets/table.png" style=" display: none;">
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
   <script>
-    var input = 78;
+    var input = 108;
 
     var radius = 20;
     //make this random and not = 180
-    var ball1x = 120;
-    var ball1y = 100;
-    var ball2x = 180;
-    var ball2y = 280;
+    var initialBall1x = 250;
+    var initialBall1y = 100;
+    var initialBall2x = 180;
+    var initialBall2y = 280;
+    var ball1x = initialBall1x;
+    var ball1y = initialBall1y;
+    var ball2x = initialBall2x;
+    var ball2y = initialBall2y;
     var change1X = 1;
     var change1Y = 0;
+    var change2Y = Math.round(Math.sin(input * Math.PI / 180) * -1 * speed);
+    var change2X = Math.round(Math.cos(input * Math.PI / 180) * speed);
 
     var speed = 30;
     var wallSeparation = 10;
     var animation;
+    var result = document.getElementById("result");
+    var reset = document.getElementById("reset");
 
+    window.onload = drawOriginal;
 
-    var change2Y = Math.round(Math.sin(input * Math.PI / 180) * -1 * speed);
-    var change2X = Math.round(Math.cos(input * Math.PI / 180) * +1 * speed);
-
-    window.onload = function() {
+    function drawOriginal() {
       var canvas = document.getElementById("myCanvas");
       var ctx = canvas.getContext("2d");
       var ball = document.getElementById("ball1");
+
+      ball1x = initialBall1x;
+      ball1y = initialBall1y;
+      ball2x = initialBall2x;
+      ball2y = initialBall2y;
+      change1X = 1;
+      change1Y = 0;
+
       ctx.drawImage(table, 0, 0, 400, 600);
-      ctx.drawImage(ball, ball1x, ball1y, radius, radius);
+      ctx.drawImage(ball, ball1x, ball1y, 2 * radius, 2 * radius);
       ctx.drawImage(ball, ball2x, ball2y, 2 * radius, 2 * radius);
 
       drawLine(ctx, ball1x + radius, ball1y + radius, ball2x + radius, ball2y + radius);
-      animateBall2(ctx, ball, change2X, change2Y);
+    }
 
-      // if (checkCollision()) {
-      //   animateBall2(ctx, ball, changeFactor);
-      // }
+    function hitBall() {
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      var ball = document.getElementById("ball1");
+      input = document.getElementById("ans").value;
+      change2Y = Math.round(Math.sin(input * Math.PI / 180) * -1 * speed);
+      change2X = Math.round(Math.cos(input * Math.PI / 180) * +1 * speed);
+
+      animateBall2(ctx, ball, change2X, change2Y);
     }
 
     function getSlope(x1, y1, x2, y2) {
@@ -56,26 +136,6 @@
       ctx.stroke();
     }
 
-
-    function checkWallCollision() {
-      //yeah this is half hardcoded half soft
-      if (ball1x < wallSeparation || ball1x + 2 * radius > 400 - wallSeparation) {
-        endBall1Animation();
-      }
-      if (ball1y < wallSeparation || ball1y + 2 * radius > 600 - wallSeparation) {
-        endBall1Animation();
-      }
-      if (ball2x < wallSeparation || ball2x + 2 * radius > 400 - wallSeparation) {
-        endBall2Animation();
-      }
-      if (ball2y < wallSeparation || ball2y + 2 * radius > 600 - wallSeparation) {
-        endBall2Animation();
-      }
-
-
-    }
-
-
     function animateBall1(ctx, ball) {
       animationBall1 = setInterval(function() {
         ctx.drawImage(table, 0, 0, 400, 600);
@@ -86,8 +146,18 @@
         ctx.drawImage(ball, ball1x, ball1y, 2 * radius, 2 * radius);
         ctx.drawImage(ball, ball2x, ball2y, 2 * radius, 2 * radius);
         drawLine(ctx, ball1x + radius, ball1y + radius, ball2x + radius, ball2y + radius);
-        checkWallCollision();
-
+        if (checkScore()) {
+          endBall1Animation();
+          result.innerHTML = "You did it! The angle that works is " + input + "&#176;";
+          result.style.display = "block";
+          reset.style.display = "none";
+        }
+        if (checkWallCollision()) {
+          endBall1Animation();
+          result.innerHTML = "You hit the ball, but it missed the hole. Your angle was " + input + "&#176;";
+          result.style.display = "block";
+          reset.style.display = "inline-block"
+        }
       }, 10);
     }
 
@@ -118,7 +188,12 @@
           animateBall1(ctx, ball);
           endBall2Animation();
         }
-        checkWallCollision();
+        if (checkWallCollision()) {
+          endBall2Animation();
+          result.innerHTML = "You missed the ball, your angle was " + input + "&#176;";
+          result.style.display = "block";
+          reset.style.display = "inline-block"
+        }
       }, 10);
     }
 
@@ -129,24 +204,24 @@
     function checkBallCollision() {
       return Math.sqrt(Math.pow(Math.abs(ball1x - ball2x), 2) + Math.pow(Math.abs(ball1y - ball2y), 2)) <= radius * 2
     }
-    
-       function checkScore(){
-      if(ball1x < 40 || ball1y > 40){
-        return true;
+
+    function checkWallCollision() {
+      return (ball1x < wallSeparation || ball1x + 2 * radius > 400 - wallSeparation) ||
+        (ball1y < wallSeparation || ball1y + 2 * radius > 600 - wallSeparation) ||
+        (ball2x < wallSeparation || ball2x + 2 * radius > 400 - wallSeparation) ||
+        (ball2y < wallSeparation || ball2y + 2 * radius > 600 - wallSeparation);
+    }
+
+    function checkScore() {
+      if (ball1x < 40 && ball1y < 40) {
         console.log("true1")
-      }
-      if(ball1x > 360 || ball1y > 40){
         return true;
+      }
+      if (ball1x > 320 && ball1y < 40) {
         console.log("true2")
-      }
-      if(ball1x < 40 || ball1y < 360){
         return true;
-        console.log("true3")
       }
-      if(ball1x < 360 || ball1y < 360){
-        return true;
-        console.log("true4")
-      }
+    }
   </script>
 </body>
 
