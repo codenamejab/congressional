@@ -8,14 +8,14 @@
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <spam class="navbar-brand" href="#">Math4Fun</spam>
+    <a class="navbar-brand" href="../">Math4Fun</a>
     <ul class="navbar-nav ml-auto"></ul>
     <div class="btn-group">
       <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         All Games
       </button>
       <div class="dropdown-menu">
-        <a class="dropdown-item" href="../index.html">All Games</a>
+        <a class="dropdown-item" href="../">All Games</a>
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="../fractionsgame/">Fraction Game</a>
         <a class="dropdown-item" href="../archerygame/">Archery Game</a>
@@ -38,13 +38,12 @@
       <div class="col">
         <div class="instructions">
           <h1>Hit the target!</h1>
-          <h2>Using the input box below, write the equation of the target in<br> (x - h)^2 + (y - k)^2 = r^2 form</h2>
+          <h2>Using the input box below, write the equation of the target in <br>(x - h)^2 + (y - k)^2 = r^2 form</h2>
 
           <br>
 
           <input type="text" id="ans"> </input>
           <button class="btn" id="checkAns" onclick="checkAns()" style="background-color: yellow;"> Check </button>
-
           <h3 id="result" style="padding-top: 20px; display: none;">Correct!</h3>
 
           <div id="hints" style="padding-top: 10px;">
@@ -255,12 +254,15 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.lineWidth = 5;
 
+      var result = document.getElementById("result");
       ctx.strokeStyle = 'black';
       drawTarget();
       drawGraph();
       ctx.drawImage(arrow, centerx, centery - 95, 100, 100);
       result.innerHTML = "Correct!";
       result.style.display = "block";
+      document.getElementById(`hint1btn`).style.display = "none";
+      document.getElementById(`hint4btn`).style.display = "inline-block";
     }
 
     // draw the current frame based on sliderValue
