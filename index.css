@@ -31,7 +31,7 @@ html {
 
 .gameImage {
   max-width: 100%;
-  max-height: 140px;
+  max-height: 150px;
   width: auto;
   height: auto;
   border-radius: 15px;
@@ -101,7 +101,7 @@ footer {
 #ans:focus {
   color: #495057;
   background-color: #fff;
-  border-color: #80bdff;;
+  border-color: #80bdff;
   outline: 0;
   box-shadow: 0 0 0 .2rem rgba(0, 123, 255, .25)
 }
