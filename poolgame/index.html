@@ -167,6 +167,8 @@
           result.innerHTML = "You did it! The angle that works is " + input + "&#176;";
           result.style.display = "block";
           reset.style.display = "none";
+          document.getElementById("hint1btn").style.display = "none";
+          document.getElementById("hint3btn").style.display = "inline-block";
         }
         if (checkWallCollision()) {
           endBall1Animation();
