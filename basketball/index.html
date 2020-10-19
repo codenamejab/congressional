@@ -46,6 +46,11 @@
           <button class="btn" id="checkAns" onclick="checkAns()" style="background-color: yellow;"> Shoot! </button>
 
           <h3 id="result" style="padding-top: 20px; display: none;">Correct!</h3>
+
+          <div id="hints" style="padding-top: 10px;">
+            <button class="btn" id="hint1btn" style="background-color: yellow;" onclick="showPossibleAnswer()">See one possible answer</button>
+            <h4 id="hint1" style="display: none;">One possible answer is y=-(0.25x+2)^2+6. There is many more, try to get another one!</h4>
+          </div>
         </div>
       </div>
     </div>
@@ -401,6 +406,11 @@
       ctx.stroke();
       ctx.restore();
       ctx.closePath();
+    }
+
+    function showPossibleAnswer() {
+      document.getElementById("hint1").style.display = "block";
+      document.getElementById("hint1btn").style.display = "none";
     }
   </script>
 </body>
